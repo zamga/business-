@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slovenia Capital Map</title>
+<meta name="description" content="Where capital goes in Slovenia, where private equity returns are made, and how to size into the founder-succession mid-market. Country brief, 29 September 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<style>
+/* Layout: a survey sheet. A wide left margin carries each section's marginalia like the legend strip of a topographic map; prose runs in a 64ch column; charts break out to the full sheet. */
+:root {
+  --bg: #F2F4F3;          /* Julian Alps limestone */
+  --surface: #FFFFFF;
+  --ink: #0F1E26;         /* spruce at dusk */
+  --ink-2: #3C5059;
+  --muted: #56696F;
+  --rule: #D3DBD9;
+  --accent: #00846F;      /* Soča river emerald, for marks */
+  --accent-ink: #006B5B;  /* same hue, text-safe */
+  --accent-wash: #DCEFEB;
+  --state: #A86A10;       /* sovereign capital series */
+  --neutral-mark: #9AAAB0;
+  --seq-1: #00665D; --seq-2: #2E9489; --seq-3: #7CC3B8;
+  --contour: #A9BBB8;
+  --contour-index: #00846F;
+  --bar-bg: rgba(242, 244, 243, 0.86);
+
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --t-12: 0.75rem; --t-14: 0.875rem; --t-16: 1rem; --t-18: 1.125rem;
+  --t-22: 1.375rem; --t-30: 1.875rem; --t-44: 2.75rem;
+  --gutter: clamp(16px, 4vw, 48px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C161B; --surface: #111F26; --ink: #E4ECEA; --ink-2: #AFC0BE; --muted: #8A9D9B; --rule: #22343B;
+    --accent: #22A394; --accent-ink: #5FC7BA; --accent-wash: #123633; --state: #BD8226; --neutral-mark: #4A5E66;
+    --seq-1: #5FC7BA; --seq-2: #23897E; --seq-3: #155E57;
+    --contour: #25393F; --contour-index: #22A394; --bar-bg: rgba(12, 22, 27, 0.86);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C161B; --surface: #111F26; --ink: #E4ECEA; --ink-2: #AFC0BE; --muted: #8A9D9B; --rule: #22343B;
+  --accent: #22A394; --accent-ink: #5FC7BA; --accent-wash: #123633; --state: #BD8226; --neutral-mark: #4A5E66;
+  --seq-1: #5FC7BA; --seq-2: #23897E; --seq-3: #155E57;
+  --contour: #25393F; --contour-index: #22A394; --bar-bg: rgba(12, 22, 27, 0.86);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  padding-inline: var(--gutter);
+  padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--t-18);
+  line-height: 1.55;
+  font-optical-sizing: auto;
+}
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: var(--gutter); top: 8px; z-index: 50; background: var(--surface); padding: 8px 12px; }
+
+.sheet { max-width: 1240px; margin-inline: auto; }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  display: flex; align-items: center; gap: 24px;
+  max-width: 1240px; margin-inline: auto;
+  padding-block: 14px;
+  background: var(--bar-bg);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  font-family: var(--f-mono); font-size: var(--t-12); letter-spacing: 0.06em; text-transform: uppercase;
+}
+.bar .mark { color: var(--ink); text-decoration: none; font-weight: 500; white-space: nowrap; }
+.bar .mark b { color: var(--accent-ink); font-weight: 500; }
+.bar .links { display: flex; gap: 20px; margin-inline-start: auto; }
+.bar .links a { color: var(--muted); text-decoration: none; }
+.bar .links a:hover { color: var(--ink); }
+.bar button {
+  font: inherit; letter-spacing: inherit; text-transform: inherit;
+  color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 999px;
+  padding: 5px 12px; cursor: pointer;
+}
+.bar button:hover { border-color: var(--ink-2); }
+.progress { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+@media (max-width: 760px) { .bar .links { display: none; } .bar button { margin-inline-start: auto; } }
+
+/* ---------- hero ---------- */
+.hero { position: relative; max-width: 1240px; margin-inline: auto; padding-block: clamp(48px, 9vw, 120px) clamp(40px, 6vw, 72px); isolation: isolate; }
+#terrain {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1;
+  -webkit-mask-image: linear-gradient(90deg, transparent 8%, #000 58%);
+          mask-image: linear-gradient(90deg, transparent 8%, #000 58%);
+}
+@media (max-width: 760px) {
+  #terrain { -webkit-mask-image: linear-gradient(180deg, transparent 10%, #000 70%); mask-image: linear-gradient(180deg, transparent 10%, #000 70%); opacity: 0.8; }
+}
+.eyebrow { font-family: var(--f-mono); font-size: var(--t-12); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 20px; }
+.hero h1 { margin: 0; font-family: var(--f-display); font-weight: 800; line-height: 0.86; letter-spacing: -0.025em; }
+.hero h1 .country { display: block; font-size: clamp(3.4rem, 13.5vw, 10.5rem); font-stretch: 125%; }
+.hero h1 .sub { display: block; margin-top: 0.3em; line-height: 1.1; font-size: clamp(1.5rem, 3.6vw, 2.75rem); font-stretch: 100%; font-weight: 300; letter-spacing: -0.01em; color: var(--ink-2); }
+.dek { max-width: 44ch; margin: 28px 0 0; font-size: clamp(1.15rem, 1.9vw, 1.45rem); line-height: 1.45; color: var(--ink); text-wrap: pretty; }
+.dek em { font-style: italic; color: var(--accent-ink); }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 48px 0 0; padding: 20px 0 0; border-top: 1px solid var(--ink); max-width: 980px; }
+.facts div { min-width: 0; }
+.facts dt { font-family: var(--f-mono); font-size: var(--t-12); letter-spacing: 0.04em; color: var(--muted); }
+.facts dd { margin: 0 0 6px; font-family: var(--f-display); font-weight: 600; font-size: clamp(1.6rem, 3vw, 2.25rem); letter-spacing: -0.02em; line-height: 1.05; }
+.facts div { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
+@media (max-width: 760px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.coord { position: absolute; right: 0; bottom: 16px; margin: 0; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--muted); }
+@media (max-width: 760px) { .coord { position: static; margin-top: 28px; } }
+
+/* ---------- sections ---------- */
+.section {
+  display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 24px 56px;
+  padding-block: clamp(48px, 7vw, 88px);
+  border-top: 1px solid var(--rule);
+}
+.margin { position: sticky; top: 72px; align-self: start; font-family: var(--f-mono); font-size: var(--t-12); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.margin span { display: block; color: var(--accent-ink); margin-bottom: 6px; }
+.body { min-width: 0; }
+@media (max-width: 900px) {
+  .section { grid-template-columns: minmax(0, 1fr); }
+  .margin { position: static; }
+}
+h2 { margin: 0 0 20px; font-family: var(--f-display); font-weight: 700; font-stretch: 112%; font-size: clamp(1.75rem, 3.6vw, var(--t-44)); line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; max-width: 22ch; }
+h3 { margin: 0; font-family: var(--f-display); font-weight: 650; font-size: var(--t-22); line-height: 1.2; letter-spacing: -0.01em; text-wrap: balance; }
+.prose { max-width: 64ch; }
+.prose p { margin: 0 0 1em; text-wrap: pretty; }
+.prose p:last-child { margin-bottom: 0; }
+.lede { font-size: var(--t-22); line-height: 1.45; color: var(--ink); }
+
+/* ---------- figures ---------- */
+.figure { margin: 36px 0 0; }
+.fig-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 14px; }
+.fig-title { font-family: var(--f-display); font-weight: 600; font-size: var(--t-16); margin: 0; }
+.fig-note { font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 10px; padding: 0; list-style: none; font-family: var(--f-mono); font-size: var(--t-12); color: var(--ink-2); }
+.legend li { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.sw.sq { border-radius: 2px; }
+.chart { width: 100%; position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--f-mono); font-size: 11.5px; fill: var(--muted); }
+.chart .row-label { font-family: var(--f-display); font-size: 13.5px; fill: var(--ink-2); }
+.chart .val { fill: var(--ink); font-weight: 500; }
+.chart .grid { stroke: var(--rule); stroke-width: 1; }
+.chart .hit { fill: transparent; cursor: default; }
+.chart .hit:focus { outline: none; }
+.chart .hit:focus-visible { stroke: var(--accent); stroke-width: 2; }
+.callout { display: flex; gap: 16px; align-items: baseline; margin: 22px 0 0; padding-top: 14px; border-top: 1px solid var(--rule); max-width: 64ch; }
+.callout strong { font-family: var(--f-display); font-weight: 700; font-stretch: 112%; font-size: var(--t-30); letter-spacing: -0.02em; color: var(--accent-ink); white-space: nowrap; }
+.callout p { margin: 0; font-size: var(--t-16); color: var(--ink-2); }
+details.data { margin-top: 14px; font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); }
+details.data summary { cursor: pointer; width: max-content; }
+details.data summary:hover { color: var(--ink); }
+
+#tip {
+  position: fixed; z-index: 40; pointer-events: none; max-width: 260px;
+  background: var(--ink); color: var(--bg); border-radius: 6px; padding: 10px 12px;
+  font-family: var(--f-mono); font-size: var(--t-12); line-height: 1.45;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+#tip b { display: block; font-family: var(--f-display); font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+
+/* ---------- tables ---------- */
+.table-wrap { overflow-x: auto; margin-top: 36px; }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: var(--t-16); }
+th, td { text-align: left; vertical-align: top; padding: 12px 16px 12px 0; border-bottom: 1px solid var(--rule); }
+thead th { font-family: var(--f-mono); font-size: var(--t-12); font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border-bottom-color: var(--ink); }
+tbody th { font-family: var(--f-display); font-weight: 600; font-size: var(--t-16); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-mono); font-size: var(--t-14); }
+.data table { min-width: 0; font-size: var(--t-12); margin-top: 8px; }
+.data td, .data th { padding: 6px 12px 6px 0; }
+
+.chip { display: inline-block; white-space: nowrap; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--neutral-mark); color: var(--ink-2); }
+.chip.direct { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.chip.selective { border-color: var(--accent); color: var(--accent-ink); }
+.chip.indirect { border-style: dashed; }
+.chip.assume { border-style: dashed; border-color: var(--state); color: var(--ink-2); }
+
+/* ---------- sizing ---------- */
+.sizing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 36px; max-width: 900px; }
+.sizing-grid div { min-width: 0; border-top: 2px solid var(--ink); padding-top: 12px; }
+.sizing-grid .k { font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); letter-spacing: 0.04em; margin: 0 0 4px; }
+.sizing-grid .v { font-family: var(--f-display); font-weight: 650; font-size: var(--t-30); letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
+@media (max-width: 640px) { .sizing-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- plays ---------- */
+.plays { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 0; }
+.play { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px 32px; padding-block: 40px; border-top: 1px solid var(--rule); }
+.play:first-child { border-top: 0; padding-top: 12px; }
+.rank { font-family: var(--f-display); font-weight: 800; font-stretch: 125%; font-size: 4.5rem; line-height: 0.9; letter-spacing: -0.04em; color: var(--rule); transition: color 240ms ease; font-variant-numeric: lining-nums; }
+.play:hover .rank, .play:focus-within .rank { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .rank { transition: none; } }
+.play-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 14px; }
+.conviction { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.pips { display: inline-flex; gap: 3px; }
+.pips i { width: 14px; height: 6px; border-radius: 1px; background: var(--rule); display: block; }
+.pips i.on { background: var(--accent); }
+.play .prose { font-size: var(--t-18); }
+.play ul.points { margin: 14px 0 0; padding: 0; list-style: none; max-width: 64ch; display: grid; gap: 10px; }
+.play ul.points li { position: relative; padding-left: 20px; }
+.play ul.points li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 10px; height: 1px; background: var(--ink-2); }
+.evidence { margin: 22px 0 0; max-width: 64ch; }
+.evidence h4, .sub-h { margin: 0 0 8px; font-family: var(--f-mono); font-size: var(--t-12); font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.evidence dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 18px; font-size: var(--t-16); }
+.evidence dt { font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); padding-top: 3px; font-variant-numeric: tabular-nums; }
+.evidence dd { margin: 0; }
+.assume-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 22px 0 0; font-size: var(--t-16); max-width: 64ch; }
+.assume-row ul { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0; padding: 0; list-style: none; font-family: var(--f-mono); font-size: var(--t-14); font-variant-numeric: tabular-nums; }
+.stack-legend { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 20px; font-size: var(--t-16); }
+.stack-legend li { min-width: 0; display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 2px 10px; align-items: start; }
+.stack-legend .sw { margin-top: 6px; }
+.stack-legend small { grid-column: 2; font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); }
+@media (max-width: 640px) {
+  .play { grid-template-columns: minmax(0, 1fr); }
+  .rank { font-size: 3rem; }
+  .stack-legend { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- timeline ---------- */
+.timeline { list-style: none; margin: 8px 0 0; padding: 0; max-width: 760px; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 132px; top: 8px; bottom: 8px; width: 1px; background: var(--rule); }
+.timeline li { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 0 28px; padding-block: 12px; position: relative; }
+.timeline li::after { content: ""; position: absolute; left: 128px; top: 20px; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 2px solid var(--ink-2); }
+.timeline time { font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); padding-top: 4px; padding-right: 20px; font-variant-numeric: tabular-nums; }
+.timeline p { margin: 0; font-size: var(--t-16); padding-left: 8px; }
+.timeline li.today::after { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-wash); }
+.timeline li.today time, .timeline li.today p { color: var(--accent-ink); font-family: var(--f-mono); font-size: var(--t-12); letter-spacing: 0.06em; text-transform: uppercase; }
+.timeline li.future p { color: var(--ink-2); }
+.timeline li.future::after { border-style: dashed; }
+@media (max-width: 560px) {
+  .timeline::before { left: 4px; }
+  .timeline li { grid-template-columns: minmax(0, 1fr); padding-left: 24px; }
+  .timeline li::after { left: 0; top: 17px; }
+  .timeline p { padding-left: 0; }
+  .timeline time { padding-top: 0; }
+}
+
+/* ---------- sourcing ---------- */
+.screen {
+  margin-top: 32px; max-width: 720px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 22px clamp(16px, 3vw, 28px);
+  font-family: var(--f-mono); font-size: var(--t-14); line-height: 1.6;
+}
+.screen .hdr { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: var(--t-12); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.screen dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 24px; margin: 0; }
+.screen dt { color: var(--muted); }
+.screen dd { margin: 0; color: var(--ink); }
+.screen .out { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); color: var(--accent-ink); }
+.next { counter-reset: step; list-style: none; margin: 36px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; max-width: 980px; }
+.next li { counter-increment: step; min-width: 0; border-top: 2px solid var(--ink); padding-top: 12px; font-size: var(--t-16); }
+.next li::before { content: "Step " counter(step); display: block; font-family: var(--f-mono); font-size: var(--t-12); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+@media (max-width: 760px) { .next { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- sources ---------- */
+.sources { margin: 0; padding: 0 0 0 1.4em; columns: 2 320px; column-gap: 48px; font-size: var(--t-14); line-height: 1.5; }
+.sources li { break-inside: avoid; margin-bottom: 10px; color: var(--muted); }
+.sources a { color: var(--ink); text-decoration-color: var(--rule); }
+.sources a:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
+.sources span { display: block; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+
+footer { max-width: 1240px; margin-inline: auto; padding-block: 32px 56px; border-top: 1px solid var(--ink); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; font-family: var(--f-mono); font-size: var(--t-12); color: var(--muted); }
+footer p { margin: 0; max-width: 70ch; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="bar" aria-label="Sections">
+  <a class="mark" href="#top">SI <b>/</b> Capital map</a>
+  <div class="links">
+    <a href="#pools">Capital pools</a>
+    <a href="#sizing">Sizing</a>
+    <a href="#plays">Ranked plays</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#sourcing">Sourcing</a>
+  </div>
+  <button id="theme-toggle" type="button" aria-label="Switch colour theme">Dark</button>
+  <span class="progress" id="progress" aria-hidden="true"></span>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="terrain" aria-hidden="true"></canvas>
+  <p class="eyebrow">Country brief · Private capital · 29 September 2026</p>
+  <h1><span class="country">Slovenia</span><span class="sub">Where capital goes, and where it compounds</span></h1>
+  <p class="dek">The largest cheques in Slovenia are sovereign. The strongest returns for private capital sit in the <em>€15–75M founder mid-market</em>, where 1990s owners are exiting together and local buyout money is thin.</p>
+  <dl class="facts">
+    <div><dt>GDP, approximate</dt><dd>€70bn</dd></div>
+    <div><dt>Population</dt><dd>2.1M</dd></div>
+    <div><dt>2026 growth, IMAD baseline</dt><dd>2.0%</dd></div>
+    <div><dt>Largest domestic PE manager (ALFI, Dec 2025)</dt><dd>€249M</dd></div>
+  </dl>
+  <p class="coord">46.0569° N · 14.5058° E · Ljubljana</p>
+</header>
+
+<main class="sheet" id="main">
+
+  <section class="section" id="pools" aria-labelledby="pools-h">
+    <div class="margin"><span>Capital pools</span>Money in vs. returns out</div>
+    <div class="body">
+      <h2 id="pools-h">The big money is sovereign. The returns are private.</h2>
+      <div class="prose">
+        <p class="lede">Slovenia is a eurozone export economy that sells mainly to Germany and Austria. IMAD expects exports to recover as industry there picks up. A company bought in 2026 is bought before that recovery shows in its earnings.</p>
+        <p>The largest pools of capital are the state's: the JEK2 nuclear plant and public investment, which IMAD names as the main driver of investment growth. Private buyout capital is a rounding error next to them. That scarcity is the edge.</p>
+      </div>
+
+      <figure class="figure" aria-labelledby="pools-fig">
+        <div class="fig-head">
+          <p class="fig-title" id="pools-fig">Capital pools, euros, log scale</p>
+          <p class="fig-note">Hover or tab to a mark for detail</p>
+        </div>
+        <ul class="legend" aria-label="Legend">
+          <li><span class="sw" style="background:var(--state)"></span>State and sovereign</li>
+          <li><span class="sw" style="background:var(--accent)"></span>Private buyout capital</li>
+        </ul>
+        <div class="chart" id="chart-pools"></div>
+        <details class="data">
+          <summary>Show as table</summary>
+          <table>
+            <thead><tr><th>Pool</th><th class="num">Amount</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>JEK2, financed cost</td><td class="num">€21.8bn</td><td>Including financing</td></tr>
+              <tr><td>JEK2, overnight build cost</td><td class="num">€9.8–15.4bn</td><td>1,000–1,650 MWe, 2024 prices</td></tr>
+              <tr><td>Provectus Fund II</td><td class="num">€162.5–250M</td><td>First close Oct 2025, target €250M</td></tr>
+              <tr><td>ALFI, all funds</td><td class="num">€249M</td><td>Commitments, Dec 2025</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <div class="callout">
+          <strong>39×</strong>
+          <p>JEK2's build cost, at the low end of its range, against the total commitments of Slovenia's largest domestic private equity manager.</p>
+        </div>
+      </figure>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Area</th><th>Scale</th><th>Who controls it</th><th>Private equity access</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">JEK2 nuclear plant</th><td>€9.8–15.4bn to build, about €21.8bn financed. Final investment decision in 2029, after a referendum.</td><td>State</td><td><span class="chip indirect">Suppliers only</span></td></tr>
+            <tr><th scope="row">Public investment</th><td>Main driver of investment growth, per IMAD.</td><td>State, EU funds</td><td><span class="chip">Limited</span></td></tr>
+            <tr><th scope="row">State holdings (SDH)</th><td>2026 asset plan in force. Tenders of loan packages owed to SDH.</td><td>State, new pro-market coalition</td><td><span class="chip selective">Selective</span></td></tr>
+            <tr><th scope="row">Founder succession</th><td>1990s founders reaching exit age across export industry and services.</td><td>Founders</td><td><span class="chip direct">Direct</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sizing" aria-labelledby="sizing-h">
+    <div class="margin"><span>Sizing</span>Enterprise value bands</div>
+    <div class="body">
+      <h2 id="sizing-h">Play in the €15–75M band</h2>
+      <div class="prose">
+        <p>Below €10M, you compete with owner-operators buying a job. Above €100M, you compete with pan-regional funds and German and Austrian corporate buyers. Between the two, the only regular bidders are a handful of local funds with small vehicles.</p>
+      </div>
+
+      <figure class="figure" aria-labelledby="sizing-fig">
+        <div class="fig-head">
+          <p class="fig-title" id="sizing-fig">Who bids at each enterprise value, euros, log scale</p>
+          <p class="fig-note">Shaded column marks the target band</p>
+        </div>
+        <div class="chart" id="chart-sizing"></div>
+      </figure>
+
+      <div class="sizing-grid">
+        <div><p class="k">Equity cheque per platform</p><p class="v">€10–30M</p></div>
+        <div><p class="k">Platforms</p><p class="v">4–6</p></div>
+        <div><p class="k">Pool size</p><p class="v">€150–250M</p></div>
+      </div>
+      <div class="prose" style="margin-top:24px">
+        <p>Each platform adds smaller companies across the region. A €150–250M pool, or deal-by-deal funding with investors co-investing, fits the opportunity. A larger fund forces you up into €100M+ deals, where the competition is. A 2026 tax change sets a 0% corporate tax rate for qualifying investment funds; check whether a Slovenian vehicle would qualify.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="plays" aria-labelledby="plays-h">
+    <div class="margin"><span>Ranked plays</span>By conviction, highest first</div>
+    <div class="body">
+      <h2 id="plays-h">Five plays, ranked</h2>
+      <ol class="plays">
+
+        <li class="play">
+          <div class="rank" aria-hidden="true">1</div>
+          <div>
+            <div class="play-head">
+              <h3>Founder succession buyouts</h3>
+              <span class="conviction"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Conviction: highest</span>
+            </div>
+            <div class="prose">
+              <p>Targets are industrial exporters (car-parts suppliers moving to EV work, precision engineering, electrical components), business IT services and healthcare.</p>
+            </div>
+            <ul class="points">
+              <li><strong>Buy the shares, not the assets.</strong> Capital gains tax for individuals falls with the holding period and reaches zero for long-held stakes. A 1990s founder pays nothing on a share sale. Sellers will insist on it, so price it in.</li>
+              <li><strong>Employee ownership as a lever.</strong> A 2026 law creates employee ownership cooperatives with deductible contributions and better capital gains treatment. Use it to give managers and key staff equity cheaply. It also lets a family feel the company stays local, which wins deals on more than price.</li>
+            </ul>
+
+            <figure class="figure" aria-labelledby="stack-fig">
+              <div class="fig-head">
+                <p class="fig-title" id="stack-fig">How the seller gets paid</p>
+                <p class="fig-note">Drawn at range midpoints</p>
+              </div>
+              <div class="chart" id="chart-stack"></div>
+              <ul class="stack-legend">
+                <li><span class="sw sq" style="background:var(--seq-1)"></span><span>Cash at closing</span><small>60–70% · bank debt plus sponsor equity</small></li>
+                <li><span class="sw sq" style="background:var(--seq-2)"></span><span>Vendor note</span><small>15–25% · founder lends it back, repaid after the bank</small></li>
+                <li><span class="sw sq" style="background:var(--seq-3)"></span><span>Founder rollover</span><small>10–20% · equity kept by the founder</small></li>
+              </ul>
+            </figure>
+
+            <div class="assume-row">
+              <span class="chip assume">Assumption</span>
+              <ul>
+                <li>Entry 5–7× EBITDA</li>
+                <li>Senior debt 2.5–3.5×</li>
+                <li>Exit 8–10×</li>
+              </ul>
+            </div>
+
+            <div class="evidence">
+              <h4>Recent deals</h4>
+              <dl>
+                <dt>2025</dt><dd>Advance Capital Partners buys Unitur, one of Slovenia's largest tourism companies</dd>
+                <dt>2025</dt><dd>Advance Capital Partners buys Mikrocop, business digitalisation and cloud services</dd>
+                <dt>2025</dt><dd>Finland's KJK buys Kolpa, bathroom equipment maker</dd>
+                <dt>Mar 2026</dt><dd>Germany's Mutares buys online retailer Mimovrste</dd>
+              </dl>
+            </div>
+          </div>
+        </li>
+
+        <li class="play">
+          <div class="rank" aria-hidden="true">2</div>
+          <div>
+            <div class="play-head">
+              <h3>Regional buy-and-build from a Slovenian base</h3>
+              <span class="conviction"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Conviction: high</span>
+            </div>
+            <div class="prose">
+              <p>Keep the holding company in Slovenia for EU law and eurozone bank financing. Buy smaller companies in Croatia, Serbia and Bosnia at lower multiples, which pulls down the group's average entry price. Selling the combined group at a higher multiple than you paid for the add-ons is where most of the return comes from.</p>
+            </div>
+            <div class="evidence">
+              <h4>Proof it works</h4>
+              <dl>
+                <dt>Jun 2026</dt><dd>Advance Capital Partners buys 50% of Adria Dental Group from Provectus</dd>
+                <dt>2026</dt><dd>ACP-backed Mass agrees to buy Leder &amp; Schuh (Humanic, Shoe4You), a larger Austrian group. Closing expected in 2026.</dd>
+              </dl>
+            </div>
+          </div>
+        </li>
+
+        <li class="play">
+          <div class="rank" aria-hidden="true">3</div>
+          <div>
+            <div class="play-head">
+              <h3>State asset sales under the new government</h3>
+              <span class="conviction"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></span>Conviction: medium, timing-dependent</span>
+            </div>
+            <div class="prose">
+              <p>Janez Janša returned as prime minister with a minority coalition of 43 of 90 seats, relying on two small parties for support. His cabinet, approved on 4 June 2026, runs a pro-market, deregulatory programme. SDH's 2026 asset plan was approved on 5 February 2026 by the previous government, so expect it to be revised.</p>
+            </div>
+            <ul class="points">
+              <li>Go for stakes SDH classes as non-strategic. Don't wait for Telekom Slovenije or NLB to come to market.</li>
+              <li>SDH is tendering packages of loans owed by individuals and companies, some backed by personal guarantees. That is a distressed-debt entry point.</li>
+              <li>A minority government can fall. Only pursue processes that can sign within 12–18 months.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="play">
+          <div class="rank" aria-hidden="true">4</div>
+          <div>
+            <div class="play-head">
+              <h3>JEK2 suppliers</h3>
+              <span class="conviction"><span class="pips" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>Conviction: position to build</span>
+            </div>
+            <div class="prose">
+              <p>The new government calls JEK2 a priority, and planning for the site, immediately west of the existing Krško plant, began in February 2026. Engineering, equipment and service firms that will win work ahead of a 2029 decision can be bought before their order books are priced in. Specific targets still need to be identified.</p>
+            </div>
+          </div>
+        </li>
+
+        <li class="play">
+          <div class="rank" aria-hidden="true">5</div>
+          <div>
+            <div class="play-head">
+              <h3>The Ljubljana Stock Exchange</h3>
+              <span class="conviction"><span class="pips" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>Conviction: lowest</span>
+            </div>
+            <div class="prose">
+              <p>Krka's discount has closed; the bank is still cheap. Use the exchange to park cash or take small stakes. Taking the big names private isn't realistic because the state holds blocking stakes.</p>
+            </div>
+            <div class="table-wrap" style="margin-top:20px">
+              <table style="min-width:480px">
+                <thead><tr><th>Company</th><th class="num">Price</th><th class="num">P/E</th><th class="num">Dividend yield</th><th class="num">As of</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">NLB</th><td class="num">€229.00</td><td class="num">9.5×</td><td class="num">5.8%</td><td class="num">20 Aug 2026</td></tr>
+                  <tr><th scope="row">Krka</th><td class="num">€260.00</td><td class="num">18.9×</td><td class="num">3.5%</td><td class="num">24 Sep 2026</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="timeline" aria-labelledby="timeline-h">
+    <div class="margin"><span>Timeline</span>Oct 2025 to 2029</div>
+    <div class="body">
+      <h2 id="timeline-h">The window is open now</h2>
+      <ol class="timeline">
+        <li><time datetime="2025-10">Oct 2025</time><p>Provectus holds a €162.5M first close on its second fund, targeting €250M.</p></li>
+        <li><time datetime="2025-12">Dec 2025</time><p>ALFI's commitments across its funds reach about €249M.</p></li>
+        <li><time datetime="2026-02-05">5 Feb 2026</time><p>Government approves SDH's 2026 asset management plan.</p></li>
+        <li><time datetime="2026-02">Feb 2026</time><p>Government starts the national spatial plan for JEK2, next to the existing Krško plant.</p></li>
+        <li><time datetime="2026-03">Mar 2026</time><p>Mutares buys Mimovrste.</p></li>
+        <li><time datetime="2026-03-22">22 Mar 2026</time><p>Election. Freedom Movement wins 29 seats, SDS 28. Hung parliament.</p></li>
+        <li><time datetime="2026-05-22">22 May 2026</time><p>Parliament confirms Janez Janša as prime minister.</p></li>
+        <li><time datetime="2026-06-04">4 Jun 2026</time><p>Cabinet approved: SDS, NSi, Demokrati, SLS and FOKUS hold 43 of 90 seats, with support from Resni.ca (5) and IMNS (2).</p></li>
+        <li><time datetime="2026-06">Jun 2026</time><p>ACP buys 50% of Adria Dental Group from Provectus.</p></li>
+        <li class="today"><time datetime="2026-09-29">29 Sep 2026</time><p>This brief</p></li>
+        <li class="future"><time datetime="2026">Late 2026</time><p>Mass expected to close its purchase of Leder &amp; Schuh.</p></li>
+        <li class="future"><time datetime="2029">2029</time><p>JEK2 referendum, then the final investment decision.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="sourcing" aria-labelledby="sourcing-h">
+    <div class="margin"><span>Sourcing</span>Finding deals before brokers do</div>
+    <div class="body">
+      <h2 id="sourcing-h">The register is the deal list</h2>
+      <div class="prose">
+        <p>AJPES, the national business register, publishes annual accounts for every Slovenian company. Run this screen and the output is a list of likely succession targets no broker has marketed. Founders' ages aren't in the register, but a founding date in the early 1990s is a strong stand-in.</p>
+      </div>
+      <div class="screen" role="group" aria-label="AJPES screen">
+        <div class="hdr"><span>Screen</span><span>Source: AJPES annual accounts</span></div>
+        <dl>
+          <dt>legal form</dt><dd>d.o.o. or d.d.</dd>
+          <dt>EBITDA</dt><dd>€2M – €15M</dd>
+          <dt>owners</dt><dd>1–2 individuals</dd>
+          <dt>founded</dt><dd>before 2000</dd>
+          <dt>revenue mix</dt><dd>mostly export</dd>
+          <dt>shareholders</dt><dd>no fund on the register</dd>
+        </dl>
+        <div class="out">→ unmarketed founder-succession targets</div>
+      </div>
+      <ol class="next">
+        <li>Pull SDH's 2026 asset plan and list every stake classed as non-strategic.</li>
+        <li>Run the AJPES screen and rank the results by export share and founding year.</li>
+        <li>Get senior debt terms from local banks for a €30M EV deal before the first founder meeting.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="sources" aria-labelledby="sources-h">
+    <div class="margin"><span>Sources</span>Checked 29 Sep 2026</div>
+    <div class="body">
+      <h2 id="sources-h" style="font-size:var(--t-22);font-stretch:100%">Sources</h2>
+      <ol class="sources">
+        <li><a href="https://www.umar.gov.si/en/news/news/release/spring-forecast-of-economic-trends-2026-economic-growth-to-strengthen-amid-gradual-export-sector-recovery-and-rising-private-consumption-currently-heightened-geopolitical-uncertainty" target="_blank" rel="noopener">IMAD Spring Forecast of Economic Trends 2026</a><span>umar.gov.si</span></li>
+        <li><a href="https://en.wikipedia.org/wiki/2026_Slovenian_parliamentary_election" target="_blank" rel="noopener">2026 Slovenian parliamentary election</a><span>wikipedia.org</span></li>
+        <li><a href="https://en.wikipedia.org/wiki/16th_Government_of_Slovenia" target="_blank" rel="noopener">16th Government of Slovenia</a><span>wikipedia.org</span></li>
+        <li><a href="https://finance.yahoo.com/economy/policy/articles/slovenia-2026-election-yields-hung-161648930.html" target="_blank" rel="noopener">Slovenia's 2026 election yields hung parliament</a><span>finance.yahoo.com</span></li>
+        <li><a href="https://www.osw.waw.pl/en/publikacje/analyses/2026-05-27/slovenias-political-boomerang-janez-jansa-40" target="_blank" rel="noopener">Slovenia's political boomerang: Janez Janša 4.0</a><span>osw.waw.pl</span></li>
+        <li><a href="https://www.sdh.si/en-gb/news" target="_blank" rel="noopener">SDH news: 2026 Annual Asset Management Plan, receivables tenders</a><span>sdh.si</span></li>
+        <li><a href="https://practiceguides.chambers.com/practice-guides/private-equity-2026/slovenia" target="_blank" rel="noopener">Private Equity 2026: Slovenia</a><span>chambers.com</span></li>
+        <li><a href="https://practiceguides.chambers.com/practice-guides/corporate-ma-2026/slovenia/trends-and-developments" target="_blank" rel="noopener">Corporate M&amp;A 2026: Slovenia</a><span>chambers.com</span></li>
+        <li><a href="https://acp.si/en/fund" target="_blank" rel="noopener">Advance Capital Partners: fund</a><span>acp.si</span></li>
+        <li><a href="https://alfi.si/en/alfi-pe/" target="_blank" rel="noopener">ALFI PE</a><span>alfi.si</span></li>
+        <li><a href="https://www.world-nuclear-news.org/articles/Slovenia-JEK2-unit-would-cost-EUR9.5-EUR15.4%20billion-%20review%20says" target="_blank" rel="noopener">JEK2 unit cost review</a><span>world-nuclear-news.org</span></li>
+        <li><a href="https://world-nuclear.org/information-library/country-profiles/countries-o-s/slovenia" target="_blank" rel="noopener">Nuclear power in Slovenia</a><span>world-nuclear.org</span></li>
+        <li><a href="https://discoveryalert.com/analysis/slovenia-jek2-nuclear-project-september-2026/" target="_blank" rel="noopener">JEK2: €21.8bn financed cost</a><span>discoveryalert.com</span></li>
+        <li><a href="https://www.taxand.com/our-thinking/insights/slovenia-adopts-wide-ranging-tax-and-employment-reforms/" target="_blank" rel="noopener">Slovenia adopts wide-ranging tax and employment reforms</a><span>taxand.com</span></li>
+        <li><a href="https://taxatlas.io/country/slovenia/capital-gains-tax" target="_blank" rel="noopener">Slovenia capital gains tax rates</a><span>taxatlas.io</span></li>
+        <li><a href="https://www.investing.com/equities/krka" target="_blank" rel="noopener">Krka share price</a><span>investing.com</span></li>
+        <li><a href="https://www.investing.com/equities/nlb-dd" target="_blank" rel="noopener">NLB share price</a><span>investing.com</span></li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Figures as stated in the sources above, as of 29 September 2026. Ranges marked "Assumption" are underwriting inputs, not market data.</p>
+  <p>Slovenia Capital Map</p>
+</footer>
+
+<div id="tip" role="status" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function css(name) { return getComputedStyle(root).getPropertyValue(name).trim(); }
+
+  /* ---------- theme toggle ---------- */
+  var toggle = document.getElementById("theme-toggle");
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  function effectiveDark() {
+    var t = root.getAttribute("data-theme");
+    return t ? t === "dark" : mq.matches;
+  }
+  function syncToggle() { toggle.textContent = effectiveDark() ? "Light" : "Dark"; }
+  try { var saved = localStorage.getItem("si-theme"); if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved); } catch (e) {}
+  syncToggle();
+  toggle.addEventListener("click", function () {
+    var next = effectiveDark() ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("si-theme", next); } catch (e) {}
+    syncToggle(); redrawAll();
+  });
+  if (mq.addEventListener) mq.addEventListener("change", function () { syncToggle(); redrawAll(); });
+
+  /* ---------- scroll progress ---------- */
+  var bar = document.getElementById("progress");
+  function onScroll() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.transform = "scaleX(" + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ")";
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- terrain: animated contour field with Triglav's three summits ---------- */
+  var cv = document.getElementById("terrain");
+  var ctx = cv.getContext("2d");
+  var field = new Float32Array(0), cols = 0, rows = 0, cell = 7, W = 0, H = 0, dpr = 1;
+  var peaks = [
+    { x: 0.76, y: 0.40, h: 1.00, s: 0.15 },
+    { x: 0.66, y: 0.52, h: 0.74, s: 0.11 },
+    { x: 0.86, y: 0.56, h: 0.68, s: 0.12 }
+  ];
+  var levels = [];
+  for (var lv = 0.06; lv < 1.08; lv += 0.055) levels.push(lv);
+
+  function sizeCanvas() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(W / cell) + 1; rows = Math.ceil(H / cell) + 1;
+    field = new Float32Array(cols * rows);
+  }
+  function height(x, y, t, a) {
+    var v = 0;
+    for (var k = 0; k < peaks.length; k++) {
+      var p = peaks[k], dx = x - p.x * a, dy = y - p.y;
+      v += p.h * Math.exp(-(dx * dx + dy * dy) / (2 * p.s * p.s));
+    }
+    v += 0.11 * Math.sin(2.2 * x + 0.35 * t + 1.7 * Math.sin(1.3 * y + 0.2 * t)) * Math.cos(2.9 * y - 0.25 * t);
+    v += 0.045 * Math.sin(6.3 * x - 4.1 * y + 0.5 * t);
+    return v + 0.12;
+  }
+  function drawTerrain(t) {
+    if (!W || !H) return;
+    var a = W / H, i, j;
+    for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) field[j * cols + i] = height(i * cell / H, j * cell / H, t, a);
+    ctx.clearRect(0, 0, W, H);
+    var base = css("--contour"), idx = css("--contour-index");
+    for (var k = 0; k < levels.length; k++) {
+      var L = levels[k], isIndex = (k % 5 === 4);
+      ctx.beginPath();
+      for (j = 0; j < rows - 1; j++) {
+        var y0 = j * cell;
+        for (i = 0; i < cols - 1; i++) {
+          var o = j * cols + i;
+          var va = field[o], vb = field[o + 1], vc = field[o + cols + 1], vd = field[o + cols];
+          var c = (va > L ? 8 : 0) | (vb > L ? 4 : 0) | (vc > L ? 2 : 0) | (vd > L ? 1 : 0);
+          if (c === 0 || c === 15) continue;
+          var x0 = i * cell;
+          var tx = x0 + cell * (L - va) / (vb - va), ty = y0;
+          var rx = x0 + cell, ry = y0 + cell * (L - vb) / (vc - vb);
+          var bx = x0 + cell * (L - vd) / (vc - vd), by = y0 + cell;
+          var lx = x0, ly = y0 + cell * (L - va) / (vd - va);
+          switch (c) {
+            case 1: case 14: ctx.moveTo(lx, ly); ctx.lineTo(bx, by); break;
+            case 2: case 13: ctx.moveTo(bx, by); ctx.lineTo(rx, ry); break;
+            case 3: case 12: ctx.moveTo(lx, ly); ctx.lineTo(rx, ry); break;
+            case 4: case 11: ctx.moveTo(tx, ty); ctx.lineTo(rx, ry); break;
+            case 6: case 9: ctx.moveTo(tx, ty); ctx.lineTo(bx, by); break;
+            case 7: case 8: ctx.moveTo(tx, ty); ctx.lineTo(lx, ly); break;
+            case 5: case 10: ctx.moveTo(tx, ty); ctx.lineTo(rx, ry); ctx.moveTo(lx, ly); ctx.lineTo(bx, by); break;
+          }
+        }
+      }
+      ctx.strokeStyle = isIndex ? idx : base;
+      ctx.lineWidth = isIndex ? 1.2 : 0.8;
+      ctx.globalAlpha = isIndex ? 0.55 : 1;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    // summit marker for the main peak
+    var px = peaks[0].x * W, py = peaks[0].y * H;
+    ctx.fillStyle = css("--ink-2");
+    ctx.beginPath(); ctx.moveTo(px, py - 5); ctx.lineTo(px + 5, py + 4); ctx.lineTo(px - 5, py + 4); ctx.closePath(); ctx.fill();
+    if (W >= 700) {
+      ctx.font = "500 11px " + css("--f-mono");
+      ctx.fillStyle = css("--muted");
+      ctx.fillText("TRIGLAV 2,864 M", px + 12, py + 4);
+    }
+  }
+  var start = performance.now(), last = 0, running = false, visible = true, rafId = 0;
+  function frame(now) {
+    rafId = 0;
+    if (!running) return;
+    if (now - last > 40) { last = now; drawTerrain((now - start) / 1000 * 0.12); }
+    rafId = requestAnimationFrame(frame);
+  }
+  function play() { if (reduceMotion || running || !visible || document.hidden) return; running = true; rafId = requestAnimationFrame(frame); }
+  function pause() { running = false; if (rafId) cancelAnimationFrame(rafId); rafId = 0; }
+  function redrawTerrain() { drawTerrain(reduceMotion ? 0 : (performance.now() - start) / 1000 * 0.12); }
+  sizeCanvas(); redrawTerrain(); play();
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) { visible = es[0].isIntersecting; visible ? play() : pause(); }).observe(cv);
+  }
+  document.addEventListener("visibilitychange", function () { document.hidden ? pause() : play(); });
+
+  /* ---------- chart helpers ---------- */
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  var measureCtx = document.createElement("canvas").getContext("2d");
+  function textW(s, font) { measureCtx.font = font; return measureCtx.measureText(s).width; }
+  function logScale(d0, d1, r0, r1) {
+    var l0 = Math.log10(d0), l1 = Math.log10(d1);
+    return function (v) { return r0 + (Math.log10(v) - l0) / (l1 - l0) * (r1 - r0); };
+  }
+  function eur(v) {
+    if (v >= 1e9) return "€" + (+(v / 1e9).toFixed(1)).toString() + "bn";
+    return "€" + (+(v / 1e6).toFixed(1)).toString() + "M";
+  }
+  function roundedBar(x0, x1, y, h, rL, rR) {
+    var w = Math.max(x1 - x0, 1);
+    rL = Math.min(rL, w / 2, h / 2); rR = Math.min(rR, w / 2, h / 2);
+    return "M" + (x0 + rL) + "," + y +
+      " H" + (x0 + w - rR) + " Q" + (x0 + w) + "," + y + " " + (x0 + w) + "," + (y + rR) +
+      " V" + (y + h - rR) + " Q" + (x0 + w) + "," + (y + h) + " " + (x0 + w - rR) + "," + (y + h) +
+      " H" + (x0 + rL) + " Q" + x0 + "," + (y + h) + " " + x0 + "," + (y + h - rL) +
+      " V" + (y + rL) + " Q" + x0 + "," + y + " " + (x0 + rL) + "," + y + " Z";
+  }
+
+  /* tooltip */
+  var tip = document.getElementById("tip");
+  function showTip(html, x, y) {
+    tip.innerHTML = html; tip.hidden = false;
+    var r = tip.getBoundingClientRect();
+    var left = Math.min(Math.max(8, x + 14), window.innerWidth - r.width - 8);
+    var top = y - r.height - 14; if (top < 8) top = y + 18;
+    tip.style.left = left + "px"; tip.style.top = top + "px";
+  }
+  function hideTip() { tip.hidden = true; }
+  function bindTip(node, html) {
+    node.setAttribute("tabindex", "0");
+    node.addEventListener("mousemove", function (e) { showTip(html, e.clientX, e.clientY); });
+    node.addEventListener("mouseleave", hideTip);
+    node.addEventListener("focus", function () { var r = node.getBoundingClientRect(); showTip(html, r.left + r.width / 2, r.top); });
+    node.addEventListener("blur", hideTip);
+  }
+  window.addEventListener("scroll", hideTip, { passive: true });
+
+  /* ---------- chart 1: capital pools ---------- */
+  var pools = [
+    { label: "JEK2 nuclear plant, financed cost", group: "state", v: 21.8e9, note: "Including financing costs" },
+    { label: "JEK2 nuclear plant, overnight build cost", group: "state", lo: 9.8e9, hi: 15.4e9, note: "1,000–1,650 MWe options, 2024 prices" },
+    { label: "Provectus Fund II, first close to target", group: "private", lo: 162.5e6, hi: 250e6, note: "First close Oct 2025, target €250M" },
+    { label: "ALFI, commitments across all funds", group: "private", v: 249e6, note: "December 2025" }
+  ];
+  function drawPools() {
+    var host = document.getElementById("chart-pools"); host.innerHTML = "";
+    var w = host.clientWidth; if (!w) return;
+    var rowH = 58, top = 4, axisH = 30, h = top + pools.length * rowH + axisH, right = 6;
+    var x = logScale(1e8, 3e10, 0, w - right);
+    var svg = el("svg", { viewBox: "0 0 " + w + " " + h, width: w, height: h, role: "img", "aria-label": "Capital pools on a log scale: JEK2 dwarfs domestic private equity" }, host);
+    var ticks = [[1e8, "€100M"], [3e8, "€300M"], [1e9, "€1bn"], [3e9, "€3bn"], [1e10, "€10bn"], [3e10, "€30bn"]];
+    if (w < 560) ticks = ticks.filter(function (tk) { return tk[0] !== 3e8 && tk[0] !== 3e9; });
+    var gy = h - axisH;
+    ticks.forEach(function (tk, n) {
+      var tx = x(tk[0]);
+      el("line", { x1: tx, x2: tx, y1: top, y2: gy, class: "grid" }, svg);
+      var anchor = n === 0 ? "start" : (n === ticks.length - 1 ? "end" : "middle");
+      el("text", { x: tx, y: gy + 18, "text-anchor": anchor }, svg).textContent = tk[1];
+    });
+    el("line", { x1: 0, x2: w - right, y1: gy, y2: gy, class: "grid" }, svg);
+    var surface = css("--bg");
+    var valFont = "500 11.5px " + css("--f-mono");
+    pools.forEach(function (d, n) {
+      var y = top + n * rowH;
+      el("text", { x: 0, y: y + 16, class: "row-label" }, svg).textContent = d.label;
+      var cy = y + 36, color = d.group === "state" ? css("--state") : css("--accent");
+      var x0, x1, label;
+      var g = el("g", {}, svg);
+      if (d.v) {
+        x0 = x1 = x(d.v); label = eur(d.v);
+        el("circle", { cx: x0, cy: cy, r: 7, fill: surface }, g);
+        el("circle", { cx: x0, cy: cy, r: 5.5, fill: color }, g);
+      } else {
+        x0 = x(d.lo); x1 = x(d.hi);
+        label = d.lo >= 1e9 ? "€" + (d.lo / 1e9) + "–" + (d.hi / 1e9) + "bn" : "€" + (d.lo / 1e6) + "–" + (d.hi / 1e6) + "M";
+        el("path", { d: roundedBar(x0, x1, cy - 5, 10, 4, 4), fill: color }, g);
+      }
+      var tw = textW(label, valFont);
+      var after = x1 + 12 + tw < w - right;
+      el("text", { x: after ? x1 + 12 : x0 - 12, y: cy + 4, "text-anchor": after ? "start" : "end", class: "val" }, g).textContent = label;
+      var hit = el("rect", { x: Math.max(0, x0 - 14), y: y + 20, width: Math.max(28, x1 - x0 + 28), height: 32, class: "hit", "aria-label": d.label + ", " + label }, g);
+      bindTip(hit, "<b>" + d.label + "</b>" + label + "<br>" + d.note);
+    });
+  }
+
+  /* ---------- chart 2: EV bands ---------- */
+  var lanes = [
+    { label: "Owner-operators and individual buyers", lo: 1e6, hi: 10e6, text: "€1–10M" },
+    { label: "Domestic funds (ACP's stated deal range)", lo: 10e6, hi: 50e6, text: "€10–50M" },
+    { label: "Target band", lo: 15e6, hi: 75e6, text: "€15–75M", target: true },
+    { label: "Pan-regional funds, German and Austrian corporates", lo: 100e6, hi: 500e6, text: "€100M and up", open: true }
+  ];
+  function drawSizing() {
+    var host = document.getElementById("chart-sizing"); host.innerHTML = "";
+    var w = host.clientWidth; if (!w) return;
+    var rowH = 54, top = 4, axisH = 30, h = top + lanes.length * rowH + axisH, right = 6;
+    var x = logScale(1e6, 5e8, 0, w - right);
+    var svg = el("svg", { viewBox: "0 0 " + w + " " + h, width: w, height: h, role: "img", "aria-label": "Bidders by enterprise value on a log scale, with the €15–75M target band" }, host);
+    var gy = h - axisH;
+    el("rect", { x: x(15e6), y: top, width: x(75e6) - x(15e6), height: gy - top, fill: css("--accent-wash") }, svg);
+    var ticks = [[1e6, "€1M"], [3e6, "€3M"], [1e7, "€10M"], [3e7, "€30M"], [1e8, "€100M"], [3e8, "€300M"]];
+    ticks.forEach(function (tk, n) {
+      var tx = x(tk[0]);
+      el("line", { x1: tx, x2: tx, y1: top, y2: gy, class: "grid" }, svg);
+      el("text", { x: tx, y: gy + 18, "text-anchor": n === 0 ? "start" : "middle" }, svg).textContent = tk[1];
+    });
+    el("line", { x1: 0, x2: w - right, y1: gy, y2: gy, class: "grid" }, svg);
+    var valFont = "500 11.5px " + css("--f-mono");
+    var labelFont = "13.5px " + css("--f-display");
+    lanes.forEach(function (d, n) {
+      var y = top + n * rowH, by = y + 28;
+      var x0 = x(d.lo), x1 = x(d.hi);
+      var lw = textW(d.label, labelFont);
+      var lx = d.lo >= 1e8 ? Math.max(0, Math.min(x0, w - right - lw)) : Math.min(x0, Math.max(0, w - right - lw));
+      el("text", { x: lx, y: y + 16, class: "row-label" }, svg).textContent = d.label;
+      var fill = d.target ? css("--accent") : css("--neutral-mark");
+      el("path", { d: roundedBar(x0, x1, by, 12, 4, d.open ? 0 : 4), fill: fill }, svg);
+      var tw = textW(d.text, valFont);
+      var after = x1 + 10 + tw < w - right;
+      var before = !after && x0 - 10 - tw > 0;
+      var inside = !after && !before;
+      var t = el("text", { x: after ? x1 + 10 : (before ? x0 - 10 : x1 - 8), y: by + 10, "text-anchor": after ? "start" : "end", class: "val" }, svg);
+      t.textContent = d.text;
+      if (inside) t.setAttribute("style", "fill:" + (d.target ? css("--bg") : css("--ink")));
+      var hit = el("rect", { x: Math.max(0, x0 - 8), y: by - 8, width: x1 - x0 + 16, height: 28, class: "hit", "aria-label": d.label + ", " + d.text }, svg);
+      bindTip(hit, "<b>" + d.label + "</b>" + d.text + " enterprise value");
+    });
+  }
+
+  /* ---------- chart 3: seller consideration ---------- */
+  var parts = [
+    { label: "Cash at closing", range: "60–70%", mid: 65, c: "--seq-1" },
+    { label: "Vendor note", range: "15–25%", mid: 20, c: "--seq-2" },
+    { label: "Founder rollover", range: "10–20%", mid: 15, c: "--seq-3" }
+  ];
+  function drawStack() {
+    var host = document.getElementById("chart-stack"); host.innerHTML = "";
+    var w = host.clientWidth; if (!w) return;
+    var h = 24, gap = 2;
+    var svg = el("svg", { viewBox: "0 0 " + w + " " + h, width: w, height: h, role: "img", "aria-label": "Seller consideration: cash 60 to 70 percent, vendor note 15 to 25 percent, rollover 10 to 20 percent" }, host);
+    var avail = w - gap * (parts.length - 1), cx = 0;
+    parts.forEach(function (p, n) {
+      var sw = avail * p.mid / 100;
+      var rl = n === 0 ? 4 : 0, rr = n === parts.length - 1 ? 4 : 0;
+      el("path", { d: roundedBar(cx, cx + sw, 0, h, rl, rr), fill: css(p.c) }, svg);
+      var hit = el("rect", { x: cx, y: 0, width: sw, height: h, class: "hit", "aria-label": p.label + ", " + p.range }, svg);
+      bindTip(hit, "<b>" + p.label + "</b>" + p.range + " of the price");
+      cx += sw + gap;
+    });
+  }
+
+  function redrawAll() { drawPools(); drawSizing(); drawStack(); redrawTerrain(); }
+  var resizeT = 0;
+  function onResize() { clearTimeout(resizeT); resizeT = setTimeout(function () { sizeCanvas(); redrawAll(); }, 80); }
+  if ("ResizeObserver" in window) new ResizeObserver(onResize).observe(document.getElementById("main"));
+  else window.addEventListener("resize", onResize);
+  redrawAll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { sizeCanvas(); redrawAll(); });
+})();
+</script>
+</body>
+</html>
