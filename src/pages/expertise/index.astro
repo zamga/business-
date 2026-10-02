@@ -1,0 +1,305 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import SectionHead from '../../components/ui/SectionHead.astro';
+import Drawing from '../../components/drawings/Drawing.astro';
+import Arrow from '../../components/ui/Arrow.astro';
+import Closing from '../../components/ui/Closing.astro';
+import { getServices, serviceHref } from '../../lib/content';
+import { audiences } from '../../data/audiences';
+
+const services = await getServices();
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Expertise', href: '/expertise/' },
+];
+---
+
+<BaseLayout
+  title="Expertise"
+  description="Sell-side and buy-side advisory, valuation, strategic alternatives and transaction structuring, organised around the decision in front of you."
+  sheet="02 — Expertise"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Expertise" title="What are you <em>considering?</em>" sheet="02">
+    <p>
+      Five mandates, organised around the decision in front of you. Choose the one closest to your situation; the
+      first conversation will sharpen it.
+    </p>
+  </PageHero>
+
+  <section class="needs" aria-label="Mandates by situation">
+    <div class="wrap">
+      <ol class="needs__list" role="list">
+        {
+          services.map((s, i) => (
+            <li class="need grid" data-reveal style={`--reveal-i:${i}`}>
+              <span class="need__ref label">{s.data.ref}</span>
+              <h2 class="need__title">
+                <a class="need__link" href={serviceHref(s.id)}>
+                  {s.data.needFirstPerson}
+                </a>
+              </h2>
+              <div class="need__meta">
+                <p class="label need__service">{s.data.name}</p>
+                <p class="need__summary">{s.data.summary}</p>
+              </div>
+              <div class="need__art" aria-hidden="true">
+                <Drawing kind={s.data.drawing} uid={`idx-${s.id}`} />
+              </div>
+              <Arrow class="need__arrow" />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="matrix section" aria-labelledby="matrix-title">
+    <div class="wrap">
+      <SectionHead number="—" label="Schedule" title="Who each mandate serves" id="matrix-title" size="m">
+        <p>Read across for your situation; every marked mandate is a conversation we can have with you.</p>
+      </SectionHead>
+
+      <div class="matrix__scroll" role="region" aria-label="Mandate schedule, scrollable" tabindex="0">
+        <table class="matrix__table">
+          <caption class="visually-hidden">Mandates relevant to each type of client</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="label">Client</th>
+              {
+                services.map((s) => (
+                  <th scope="col">
+                    <a href={serviceHref(s.id)}>
+                      <span class="label matrix__ref">{s.data.ref}</span>
+                      <span class="matrix__name">{s.data.name}</span>
+                    </a>
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              audiences.map((a) => (
+                <tr>
+                  <th scope="row">{a.name}</th>
+                  {services.map((s) => {
+                    const relevant = s.data.audiences.includes(a.key);
+                    return (
+                      <td>
+                        {relevant ? (
+                          <span class="matrix__yes">
+                            <span class="matrix__node" aria-hidden="true" />
+                            <span class="visually-hidden">Relevant</span>
+                          </span>
+                        ) : (
+                          <span class="matrix__no">
+                            <span aria-hidden="true">—</span>
+                            <span class="visually-hidden">Not typically</span>
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <Closing />
+</BaseLayout>
+
+<style>
+  .needs__list {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .need {
+    position: relative;
+    row-gap: var(--space-4);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+    transition: background-color var(--dur-2) var(--ease-out);
+  }
+
+  .need__ref {
+    grid-column: 1 / -1;
+    color: var(--accent);
+  }
+
+  .need__title {
+    grid-column: 1 / -1;
+    font-size: var(--fs-display-m);
+    font-weight: 300;
+    line-height: 1.04;
+    max-width: 15em;
+  }
+
+  .need__link {
+    text-decoration: none;
+  }
+
+  .need__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .need__link:focus-visible {
+    outline: none;
+  }
+
+  .need:has(.need__link:focus-visible) {
+    outline: var(--focus);
+    outline-offset: 2px;
+  }
+
+  .need__meta {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-2);
+    max-width: 30rem;
+  }
+
+  .need__service {
+    color: var(--text);
+  }
+
+  .need__summary {
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .need__art {
+    display: none;
+  }
+
+  :global(.need__arrow) {
+    display: none;
+  }
+
+  @media (hover: hover) {
+    .need:hover {
+      background: var(--mineral-shade);
+    }
+
+    .need:hover :global(.need__arrow) {
+      transform: translateX(0.4rem);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .need {
+      align-items: start;
+      padding-block: var(--space-7);
+    }
+
+    .need__ref {
+      grid-column: 1 / span 1;
+      padding-top: 1em;
+    }
+
+    .need__title {
+      grid-column: 2 / span 6;
+    }
+
+    .need__meta {
+      grid-column: 8 / span 3;
+      padding-top: 0.6em;
+    }
+
+    .need__art {
+      display: block;
+      grid-column: 11 / span 2;
+      grid-row: 1;
+      margin-top: 0.4em;
+    }
+
+    :global(.need__arrow) {
+      display: none;
+    }
+  }
+
+  /* ------------------------------------------------------------ matrix */
+  .matrix__scroll {
+    margin-top: var(--space-8);
+    overflow-x: auto;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .matrix__scroll:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .matrix__table {
+    width: 100%;
+    min-width: 46rem;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+  }
+
+  .matrix__table th,
+  .matrix__table td {
+    padding: var(--space-4) var(--space-3);
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .matrix__table thead th {
+    vertical-align: bottom;
+    font-weight: 500;
+  }
+
+  .matrix__table thead a {
+    display: grid;
+    gap: var(--space-1);
+    text-decoration: none;
+  }
+
+  .matrix__table thead a:hover .matrix__name {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+  }
+
+  .matrix__ref {
+    color: var(--accent);
+  }
+
+  .matrix__table tbody th {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 340;
+    line-height: 1.2;
+    min-width: 12rem;
+  }
+
+  .matrix__table td + td,
+  .matrix__table th + td {
+    border-left: 1px solid var(--line);
+  }
+
+  .matrix__yes,
+  .matrix__no {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+  }
+
+  .matrix__node {
+    width: 9px;
+    height: 9px;
+    background: var(--ink);
+    outline: 1px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .matrix__no {
+    color: var(--line-strong);
+  }
+</style>

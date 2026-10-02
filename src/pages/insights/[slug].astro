@@ -1,0 +1,166 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render, getEntries } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import Prose from '../../components/ui/Prose.astro';
+import Closing from '../../components/ui/Closing.astro';
+import { getInsights, dateFormatter, readingMinutes, serviceHref, type Insight } from '../../lib/content';
+import { absolute } from '../../lib/seo';
+import { site } from '../../data/site';
+
+export const getStaticPaths = (async () => {
+  const insights = await getInsights();
+  return insights.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  entry: Insight;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const related = await getEntries(entry.data.related);
+const href = `/insights/${entry.id}/`;
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Insights', href: '/insights/' },
+  { name: entry.data.title, href },
+];
+const minutes = readingMinutes(entry.body ?? '');
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: entry.data.title,
+  description: entry.data.dek,
+  datePublished: entry.data.published.toISOString(),
+  ...(entry.data.updated ? { dateModified: entry.data.updated.toISOString() } : {}),
+  author: entry.data.author
+    ? { '@type': 'Person', name: entry.data.author }
+    : { '@type': 'Organization', name: site.name },
+  publisher: { '@id': absolute('/#organization', Astro.site) },
+  mainEntityOfPage: absolute(href, Astro.site),
+};
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.dek}
+  sheet="08 — Insights"
+  ogType="article"
+  published={entry.data.published}
+  crumbs={crumbs}
+  jsonLd={[articleLd]}
+  noindex={entry.data.draft}
+>
+  {
+    entry.data.draft && (
+      <p class="draft-banner" role="note">
+        <span class="label">Draft</span> Preview only. This article is not published and is excluded from production
+        builds until approved.
+      </p>
+    )
+  }
+  <PageHero crumbs={crumbs} label={entry.data.topics.join(' · ')} title={entry.data.title} sheet="08" wide>
+    <p>{entry.data.dek}</p>
+  </PageHero>
+
+  <article class="section--tight post">
+    <div class="wrap grid">
+      <aside class="post__meta" aria-label="Article details">
+        <p class="label">Published</p>
+        <p class="nums">
+          <time datetime={entry.data.published.toISOString()}>{dateFormatter.format(entry.data.published)}</time>
+        </p>
+        <p class="label">Reading time</p>
+        <p class="nums">{minutes} min</p>
+        {
+          entry.data.author && (
+            <>
+              <p class="label">Author</p>
+              <p>{entry.data.author}</p>
+            </>
+          )
+        }
+        {
+          related.length > 0 && (
+            <>
+              <p class="label">Related mandates</p>
+              <ul role="list">
+                {related.map((r) => (
+                  <li>
+                    <a href={serviceHref(r.id)}>{r.data.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </aside>
+      <Prose class="post__body">
+        <Content />
+      </Prose>
+    </div>
+  </article>
+
+  <Closing />
+</BaseLayout>
+
+<style>
+  .draft-banner {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+    padding: var(--space-3) var(--margin);
+    background: var(--ink);
+    color: var(--mineral);
+    font-size: var(--fs-small);
+  }
+
+  .draft-banner .label {
+    color: var(--glow);
+  }
+
+  .post {
+    padding-bottom: var(--section);
+  }
+
+  .post__meta {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-5);
+    align-content: start;
+    font-size: var(--fs-small);
+    margin-bottom: var(--space-7);
+  }
+
+  .post__meta .label {
+    color: var(--text-muted);
+    padding-top: 0.25em;
+  }
+
+  :global(.post__body) {
+    grid-column: 1 / -1;
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+  }
+
+  @media (min-width: 64em) {
+    .post__meta {
+      grid-column: 1 / span 3;
+      grid-template-columns: 1fr;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+      align-self: start;
+    }
+
+    .post__meta .label:not(:first-child) {
+      margin-top: var(--space-4);
+    }
+
+    :global(.post__body) {
+      grid-column: 4 / span 7;
+    }
+  }
+</style>

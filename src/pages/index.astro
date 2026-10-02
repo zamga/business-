@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Position from '../components/home/Position.astro';
+import Clients from '../components/home/Clients.astro';
+import ExpertiseSheets from '../components/home/ExpertiseSheets.astro';
+import Assembly from '../components/approach/Assembly.astro';
+import Principles from '../components/home/Principles.astro';
+import Closing from '../components/ui/Closing.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title={site.descriptor}
+  description={site.description}
+  sheet="01 — Index"
+  assembleMark
+>
+  <Hero />
+  <Position />
+  <Clients />
+  <ExpertiseSheets />
+  <Assembly />
+  <Principles />
+  <Closing />
+</BaseLayout>

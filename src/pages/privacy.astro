@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Prose from '../components/ui/Prose.astro';
+import Pending from '../components/ui/Pending.astro';
+import { site, enquiryEndpoint } from '../data/site';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Privacy notice', href: '/privacy/' },
+];
+const { legal, contact } = site;
+const formProvider = (() => {
+  try {
+    return enquiryEndpoint ? new URL(enquiryEndpoint).hostname : null;
+  } catch {
+    return null;
+  }
+})();
+---
+
+<BaseLayout
+  title="Privacy notice"
+  description="How the BERGWEISS website handles personal data: enquiries, hosting, the absence of cookies and tracking, and your rights."
+  sheet="07 — Privacy"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Privacy" title="Privacy notice" sheet="07">
+    <p>This notice explains what personal data this website processes, why, and the rights you have.</p>
+  </PageHero>
+
+  <section class="section--tight privacy">
+    <div class="wrap grid">
+      <Prose class="privacy__body">
+        <h2>Who is responsible</h2>
+        <dl>
+          <div>
+            <dt>Controller</dt>
+            <dd>{site.legalName ?? <Pending what="registered company name" />}</dd>
+          </div>
+          <div>
+            <dt>Address</dt>
+            <dd>{legal.registeredOffice ?? <Pending what="registered office address" />}</dd>
+          </div>
+          <div>
+            <dt>Privacy contact</dt>
+            <dd>
+              {
+                contact.email ? (
+                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                ) : (
+                  <Pending what="contact for data protection requests" />
+                )
+              }
+            </dd>
+          </div>
+        </dl>
+
+        <h2>Enquiries</h2>
+        <p>
+          When you submit the enquiry form, we receive the details you provide: your name, email address, and, if you
+          choose to give them, your organisation, phone number and message, together with the options you select. We
+          use them only to respond to your enquiry and to arrange a conversation.
+        </p>
+        <p>
+          We process these details to take steps at your request before a possible engagement, and in our legitimate
+          interest in answering enquiries addressed to us (Article 6(1)(b) and (f) GDPR and UK GDPR, where applicable).
+        </p>
+        <p>
+          Enquiries are transmitted to a form-processing service that acts on our behalf:
+          {formProvider ? <strong> {formProvider}</strong> : <Pending what="name of the form-processing provider" />}.
+        </p>
+
+        <h2>Hosting and server logs</h2>
+        <p>
+          When you visit this website, the hosting provider processes technical data that every browser sends, such as
+          your IP address, the date and time of access, the page requested and your browser type, in order to deliver
+          the website and keep it secure. Hosting provider:
+          <Pending what="name and location of the hosting provider" />
+        </p>
+
+        <h2>Cookies, analytics and fonts</h2>
+        <p>
+          This website sets no cookies and uses no analytics, advertising or social media trackers. Its typefaces are
+          served from this website itself, so no data is sent to third-party font services.
+        </p>
+
+        <h2>Retention</h2>
+        <p>
+          We keep enquiry data only for as long as needed to deal with your enquiry. If an engagement follows, we keep
+          it for as long as the engagement and legal retention obligations require.
+        </p>
+
+        <h2>Your rights</h2>
+        <p>
+          You have the right to access the personal data we hold about you and to have it corrected or erased. You may
+          also ask us to restrict its processing, object to processing based on legitimate interests, and receive your
+          data in a portable format. You can lodge a complaint with a data protection supervisory authority.
+        </p>
+
+        <h2>Changes</h2>
+        <p>We will update this notice when the website or the way we process data changes.</p>
+      </Prose>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .privacy {
+    padding-bottom: var(--section);
+  }
+
+  :global(.privacy__body) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 64em) {
+    :global(.privacy__body) {
+      grid-column: 4 / span 7;
+    }
+  }
+</style>

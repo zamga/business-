@@ -1,0 +1,632 @@
+---
+/**
+ * Enquiry form. Asks only what is needed to route the conversation.
+ *
+ * States: idle → validating (inline errors + summary) → sending → success,
+ * error (with retry) or not-connected. Success is shown only after the
+ * configured endpoint answers 2xx; without an endpoint nothing is sent and
+ * the visitor is told so.
+ */
+import Arrow from '../ui/Arrow.astro';
+import { enquiryEndpoint, site } from '../../data/site';
+
+const clientTypes = [
+  { value: 'owner', label: 'An owner considering a sale' },
+  { value: 'family', label: 'A family business planning succession' },
+  { value: 'acquirer', label: 'An acquirer' },
+  { value: 'investor', label: 'A family office or private equity investor' },
+  { value: 'other', label: 'Something else' },
+];
+
+const topics = [
+  { value: 'sell-side', label: 'Selling a business' },
+  { value: 'buy-side', label: 'Acquiring a business' },
+  { value: 'valuation', label: 'Valuation' },
+  { value: 'strategic-alternatives', label: 'Strategic options' },
+  { value: 'transaction-structuring', label: 'Transaction structure' },
+  { value: 'unsure', label: 'Not sure yet' },
+];
+
+const connected = enquiryEndpoint.length > 0;
+const email = site.contact.email;
+---
+
+<div class="enquiry" data-enquiry data-endpoint={enquiryEndpoint} data-email={email ?? ''}>
+  <form
+    class="form"
+    action={connected ? enquiryEndpoint : undefined}
+    method="post"
+    data-form
+    aria-describedby="form-note"
+  >
+    <div class="form__summary" data-summary tabindex="-1" hidden>
+      <h2 class="form__summary-title">Please check the following</h2>
+      <ul role="list" data-summary-list></ul>
+    </div>
+
+    <p id="form-note" class="form__note">
+      All fields are required unless marked optional. Please do not include confidential details at this stage; we
+      will arrange a secure channel when needed.
+    </p>
+
+    <fieldset class="field field--choice" data-field="clientType">
+      <legend class="field__label label">You are</legend>
+      <p class="field__error" id="err-clientType" data-error hidden></p>
+      <div class="choices">
+        {
+          clientTypes.map((c, i) => (
+            <label class="choice">
+              <input
+                type="radio"
+                id={`f-client-${c.value}`}
+                name="clientType"
+                value={c.value}
+                required={i === 0}
+                aria-describedby="err-clientType"
+              />
+              <span class="choice__box" aria-hidden="true" />
+              <span class="choice__text">{c.label}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="field field--choice" data-field="topic">
+      <legend class="field__label label">Your enquiry concerns</legend>
+      <p class="field__error" id="err-topic" data-error hidden></p>
+      <div class="choices choices--compact">
+        {
+          topics.map((t, i) => (
+            <label class="choice">
+              <input
+                type="radio"
+                id={`f-topic-${t.value}`}
+                name="topic"
+                value={t.value}
+                required={i === 0}
+                aria-describedby="err-topic"
+              />
+              <span class="choice__box" aria-hidden="true" />
+              <span class="choice__text">{t.label}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <div class="form__row">
+      <div class="field" data-field="name">
+        <label class="field__label label" for="f-name">Name</label>
+        <input
+          class="field__input"
+          id="f-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          required
+          maxlength="120"
+          aria-describedby="err-name"
+        />
+        <p class="field__error" id="err-name" data-error hidden></p>
+      </div>
+      <div class="field" data-field="organisation">
+        <label class="field__label label" for="f-org">Organisation <span class="field__opt">optional</span></label>
+        <input class="field__input" id="f-org" name="organisation" type="text" autocomplete="organization" maxlength="160" />
+      </div>
+    </div>
+
+    <div class="form__row">
+      <div class="field" data-field="email">
+        <label class="field__label label" for="f-email">Email</label>
+        <input
+          class="field__input"
+          id="f-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          maxlength="200"
+          aria-describedby="err-email"
+        />
+        <p class="field__error" id="err-email" data-error hidden></p>
+      </div>
+      <div class="field" data-field="phone">
+        <label class="field__label label" for="f-phone">Phone <span class="field__opt">optional</span></label>
+        <input
+          class="field__input"
+          id="f-phone"
+          name="phone"
+          type="tel"
+          autocomplete="tel"
+          maxlength="40"
+          aria-describedby="hint-phone"
+        />
+        <p class="field__hint" id="hint-phone">If you would prefer a call.</p>
+      </div>
+    </div>
+
+    <div class="field" data-field="message">
+      <label class="field__label label" for="f-message">Context <span class="field__opt">optional</span></label>
+      <textarea
+        class="field__input field__input--area"
+        id="f-message"
+        name="message"
+        rows="5"
+        maxlength="2000"
+        aria-describedby="hint-message"></textarea>
+      <p class="field__hint" id="hint-message">A few lines on what you are considering, and your timing.</p>
+    </div>
+
+    <!-- Spam trap for automated submissions; hidden from people and assistive technology. -->
+    <div class="form__trap" aria-hidden="true">
+      <label for="f-gotcha">Leave this field empty</label>
+      <input id="f-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="field field--consent" data-field="consent">
+      <label class="consent">
+        <input type="checkbox" id="f-consent" name="consent" value="yes" required aria-describedby="err-consent" />
+        <span class="choice__box choice__box--check" aria-hidden="true"></span>
+        <span>
+          I agree that BERGWEISS may use these details to respond to my enquiry, as described in the <a
+            href="/privacy/">privacy notice</a
+          >.
+        </span>
+      </label>
+      <p class="field__error" id="err-consent" data-error hidden></p>
+    </div>
+
+    <input type="hidden" name="source" value="website-enquiry" />
+
+    <div class="form__actions">
+      <button class="submit" type="submit" data-submit>
+        <span class="submit__label" data-submit-label>Send enquiry</span>
+        <Arrow />
+        <span class="submit__progress" aria-hidden="true"></span>
+      </button>
+      <p class="form__status" role="status" aria-live="polite" data-status></p>
+    </div>
+
+    {
+      !connected && (
+        <noscript>
+          <p class="form__offline">
+            Online enquiries are not yet connected, so this form cannot send messages yet.
+            {email && (
+              <>
+                {' '}
+                Please write to <a href={`mailto:${email}`}>{email}</a>.
+              </>
+            )}
+          </p>
+        </noscript>
+      )
+    }
+  </form>
+
+  <div class="result" data-result tabindex="-1" hidden>
+    <p class="label result__label" data-result-label></p>
+    <h2 class="result__title" data-result-title></h2>
+    <p class="result__text" data-result-text></p>
+    <div class="result__actions" data-result-actions></div>
+  </div>
+</div>
+
+<style>
+  .form {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  .form__note {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: 36rem;
+  }
+
+  .form__summary {
+    padding: var(--space-5);
+    border: 1px solid var(--redline);
+    border-left-width: 4px;
+    background: color-mix(in srgb, var(--redline) 5%, var(--mineral));
+  }
+
+  .form__summary:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .form__summary-title {
+    font-family: var(--sans);
+    font-size: var(--fs-body);
+    font-weight: 560;
+    letter-spacing: 0;
+    margin-bottom: var(--space-3);
+  }
+
+  .form__summary ul {
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--fs-small);
+  }
+
+  .form__summary a {
+    color: var(--redline);
+  }
+
+  .form__row {
+    display: grid;
+    gap: var(--space-7) var(--gutter);
+  }
+
+  @media (min-width: 40em) {
+    .form__row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ------------------------------------------------------------ fields */
+  .field {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    min-width: 0;
+    border: 0;
+    padding: 0;
+  }
+
+  .field__label {
+    display: block;
+    color: var(--text);
+    padding: 0;
+  }
+
+  .field__opt {
+    margin-left: 0.4em;
+    color: var(--text-muted);
+    font-weight: 450;
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+
+  .field__input {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--control);
+    border-radius: 0;
+    background: color-mix(in srgb, var(--mineral) 50%, white);
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--ink);
+    transition: border-color var(--dur-1) ease;
+  }
+
+  .field__input:hover {
+    border-color: var(--ink);
+  }
+
+  .field__input:focus-visible {
+    border-color: var(--ink);
+    outline: 2px solid var(--ink);
+    outline-offset: 0;
+  }
+
+  .field__input--area {
+    resize: vertical;
+    min-height: 8rem;
+  }
+
+  .field__hint {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .field__error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-small);
+    font-weight: 520;
+    color: var(--redline);
+  }
+
+  .field__error::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    background: currentColor;
+  }
+
+  .field[data-invalid] .field__input {
+    border-color: var(--redline);
+    box-shadow: inset 3px 0 0 var(--redline);
+  }
+
+  /* Choice cards: the square fills in, like a joint node. */
+  .choices {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  @media (min-width: 40em) {
+    .choices--compact {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64em) {
+    .choices--compact {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .choice {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 3.25rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--control);
+    cursor: pointer;
+    transition:
+      border-color var(--dur-1) ease,
+      background-color var(--dur-1) ease;
+  }
+
+  .choice:hover {
+    border-color: var(--ink);
+  }
+
+  .choice input,
+  .consent input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .choice__box {
+    position: relative;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+  }
+
+  .choice__box::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: scale(0);
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+
+  /* The consent box is a checkbox: square, with a drafted tick. */
+  .choice__box--check {
+    border-radius: 0;
+  }
+
+  .choice__box--check::after {
+    inset: 2px 5px 5px;
+    border-radius: 0;
+    background: none;
+    border: solid var(--ink);
+    border-width: 0 1.5px 1.5px 0;
+    rotate: 45deg;
+  }
+
+  .choice:has(input:checked) {
+    border-color: var(--ink);
+    background: var(--mineral-shade);
+  }
+
+  .choice:has(input:checked) .choice__box::after,
+  .consent:has(input:checked) .choice__box::after {
+    transform: scale(1);
+  }
+
+  .choice:has(input:focus-visible),
+  .consent:has(input:focus-visible) .choice__box {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  .field--choice[data-invalid] .choice {
+    border-color: var(--redline);
+  }
+
+  .choice__text {
+    font-size: var(--fs-small);
+    line-height: 1.35;
+  }
+
+  .consent {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--fs-small);
+    cursor: pointer;
+    max-width: 38rem;
+  }
+
+  .consent .choice__box {
+    margin-top: 0.2em;
+  }
+
+  .field--consent[data-invalid] .choice__box {
+    border-color: var(--redline);
+    box-shadow: 0 0 0 1px var(--redline);
+  }
+
+  .form__trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* ------------------------------------------------------------ submit */
+  .form__actions {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+
+  .submit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.1rem;
+    min-height: 3.5rem;
+    padding: 0 1.6rem;
+    overflow: hidden;
+    background: var(--ink);
+    color: var(--mineral);
+    font-size: var(--fs-body);
+    font-weight: 540;
+    transition: background-color var(--dur-2) var(--ease-out);
+  }
+
+  .submit:hover {
+    background: var(--redline);
+  }
+
+  .submit:hover :global(.arrow) {
+    transform: translateX(0.3rem);
+  }
+
+  .submit:focus-visible {
+    outline: 2px solid var(--redline);
+    outline-offset: 4px;
+  }
+
+  .submit[aria-busy='true'] {
+    cursor: progress;
+    background: var(--ink);
+  }
+
+  .submit__progress {
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    background: var(--glow);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .submit[aria-busy='true'] .submit__progress {
+    animation: progress 1.6s var(--ease-draft) infinite;
+  }
+
+  @keyframes progress {
+    0% {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    50% {
+      transform: scaleX(1);
+      transform-origin: left center;
+    }
+    50.1% {
+      transform-origin: right center;
+    }
+    100% {
+      transform: scaleX(0);
+      transform-origin: right center;
+    }
+  }
+
+  .form__status {
+    min-height: 1.5em;
+    font-size: var(--fs-small);
+    max-width: 36rem;
+  }
+
+  .form__status[data-tone='error'] {
+    color: var(--redline);
+    font-weight: 520;
+  }
+
+  .form__offline {
+    padding: var(--space-4);
+    border: 1px solid var(--line-strong);
+    font-size: var(--fs-small);
+  }
+
+  /* ------------------------------------------------------------ result */
+  .result {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-7) var(--space-6);
+    border: 1px solid var(--ink);
+    background: var(--mineral);
+  }
+
+  .result:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .result__label {
+    color: var(--accent);
+  }
+
+  .result[data-tone='pending'] .result__label {
+    color: var(--stone);
+  }
+
+  .result__title {
+    font-size: var(--fs-display-m);
+    font-weight: 300;
+  }
+
+  .result__text {
+    max-width: 34rem;
+    color: var(--text-muted);
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+  }
+
+  .result__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+
+  .result__actions :global(button),
+  .result__actions :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: var(--fs-small);
+    font-weight: 540;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .result:not([hidden]) {
+      animation: result-in var(--dur-3) var(--ease-out) both;
+    }
+  }
+
+  @keyframes result-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1rem, 0);
+    }
+  }
+</style>
+
+<script>
+  import { initEnquiry } from '../../scripts/enquiry';
+  document.querySelectorAll<HTMLElement>('[data-enquiry]').forEach(initEnquiry);
+</script>

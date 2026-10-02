@@ -1,0 +1,116 @@
+---
+/**
+ * The mark at drawing scale: members drawn in section (outline + hatch),
+ * the brace in redline. `omit` leaves members out (the 404 uses a frame
+ * without its brace).
+ */
+interface Props {
+  size?: string;
+  assemble?: boolean;
+  omit?: Array<'beam' | 'left' | 'right' | 'base' | 'brace'>;
+  class?: string;
+  uid: string;
+}
+
+const { size = '6rem', assemble = false, omit = [], class: className, uid } = Astro.props;
+const has = (m: string) => !omit.includes(m as never);
+const hatch = `dm-hatch-${uid}`;
+---
+
+<svg
+  class:list={['dmark', { 'dmark--assemble': assemble }, className]}
+  viewBox="-2 -2 104 104"
+  style={`--size:${size}`}
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <pattern id={hatch} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" stroke-width="0.7"></line>
+    </pattern>
+  </defs>
+  <g class="dmark__frame" fill={`url(#${hatch})`} stroke="currentColor">
+    {has('beam') && <rect class="dmark__m dmark__m--beam" x="0" y="0" width="100" height="8" />}
+    {has('left') && <rect class="dmark__m dmark__m--left" x="0" y="12" width="8" height="76" />}
+    {has('right') && <rect class="dmark__m dmark__m--right" x="92" y="12" width="8" height="76" />}
+    {has('base') && <rect class="dmark__m dmark__m--base" x="0" y="92" width="100" height="8" />}
+  </g>
+  {
+    has('brace') ? (
+      <g transform="rotate(-45 50 50)">
+        <rect class="dmark__m dmark__m--brace" x="0.5" y="46" width="99" height="8" />
+      </g>
+    ) : (
+      <g transform="rotate(-45 50 50)">
+        <rect class="dmark__missing" x="0.5" y="46" width="99" height="8" />
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .dmark {
+    width: var(--size);
+    height: var(--size);
+    overflow: visible;
+    color: var(--text);
+  }
+
+  .dmark__m {
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Everything is drawn; the decisive member is solid. */
+  .dmark__m--brace {
+    fill: var(--accent);
+    stroke: var(--accent);
+  }
+
+  .dmark__missing {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dmark--assemble .dmark__m {
+      animation: dmark-in 820ms var(--ease-draft) both;
+      transform-box: fill-box;
+    }
+
+    .dmark--assemble .dmark__m--base {
+      --from: 0 160%;
+      animation-delay: 380ms;
+    }
+
+    .dmark--assemble .dmark__m--left {
+      --from: -260% 0;
+      animation-delay: 500ms;
+    }
+
+    .dmark--assemble .dmark__m--right {
+      --from: 260% 0;
+      animation-delay: 620ms;
+    }
+
+    .dmark--assemble .dmark__m--beam {
+      --from: 0 -160%;
+      animation-delay: 740ms;
+    }
+
+    .dmark--assemble .dmark__m--brace {
+      --from: 34% 0;
+      animation-delay: 940ms;
+    }
+  }
+
+  @keyframes dmark-in {
+    from {
+      opacity: 0;
+      translate: var(--from);
+    }
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import { principles } from '../../data/principles';
+
+interface Props {
+  number?: string;
+  detailed?: boolean;
+  title?: string;
+}
+
+const { number = '05', detailed = false, title = 'What clients rely on us for' } = Astro.props;
+---
+
+<section class="principles section" aria-labelledby="principles-title">
+  <div class="wrap">
+    <SectionHead number={number} label="Principles" title={title} id="principles-title" />
+
+    <ol class="principles__list" role="list">
+      {
+        principles.map((p, i) => (
+          <li class="principle" data-reveal style={`--reveal-i:${i}`}>
+            <span class="principle__num label nums">P-0{i + 1}</span>
+            <h3 class="principle__name">{p.name}</h3>
+            <p class="principle__line">{p.line}</p>
+            {detailed && <p class="principle__detail">{p.detail}</p>}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .principles {
+    background: var(--mineral-shade);
+  }
+
+  .principles__list {
+    display: grid;
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .principle {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .principle__num {
+    color: var(--accent);
+  }
+
+  .principle__name {
+    font-size: var(--fs-display-m);
+    font-weight: 320;
+  }
+
+  .principle__line {
+    max-width: 30rem;
+  }
+
+  .principle__detail {
+    max-width: 30rem;
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 64em) {
+    .principles__list {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* Columns of an elevation: each principle stands on its own vertical. */
+    .principle {
+      min-height: 22rem;
+      padding: var(--space-6) var(--gutter) var(--space-7);
+      border-bottom: 0;
+      border-left: 1px solid var(--line);
+      gap: var(--space-4);
+    }
+
+    .principle:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .principle__name {
+      font-size: clamp(1.75rem, 0.9rem + 1.4vw, 2.75rem);
+      margin-bottom: auto;
+    }
+
+    .principle__line {
+      margin-top: var(--space-8);
+    }
+  }
+</style>

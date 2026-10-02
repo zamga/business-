@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Assembly from '../components/approach/Assembly.astro';
+import Principles from '../components/home/Principles.astro';
+import Closing from '../components/ui/Closing.astro';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Approach', href: '/approach/' },
+];
+---
+
+<BaseLayout
+  title="Approach — the architecture of a transaction"
+  description="Strategy, valuation, counterparties, terms and execution: the five elements of every transaction BERGWEISS advises on, and the order in which we build them."
+  sheet="03 — Approach"
+  ogImage="/og/approach.png"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Approach" title="The architecture <em>of a transaction.</em>" sheet="03" wide>
+    <p>
+      Every transaction we advise on is built from the same five elements, in the same order. The details change with
+      each client; the discipline does not.
+    </p>
+  </PageHero>
+
+  <Assembly detailed headingLevel="h1" showLink={false} />
+
+  <Principles number="—" detailed title="What we hold to" />
+
+  <Closing />
+</BaseLayout>

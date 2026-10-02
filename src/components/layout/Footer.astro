@@ -1,0 +1,262 @@
+---
+import Mark from '../brand/Mark.astro';
+import { wordmarkPath, wordmarkViewBox, wordmarkAspect } from '../brand/wordmark';
+import { getServices, getPrimaryNav, serviceHref } from '../../lib/content';
+import { contactHref, legalNav } from '../../data/navigation';
+import { site } from '../../data/site';
+
+interface Props {
+  sheet: string;
+}
+
+const { sheet } = Astro.props;
+const services = await getServices();
+const nav = await getPrimaryNav();
+const firmLinks = [...nav.filter((n) => n.href !== '/expertise/'), { label: 'Contact', href: contactHref }];
+const year = new Date().getFullYear();
+const { email, phone, offices } = site.contact;
+---
+
+<footer class="site-footer on-ink">
+  <div class="wrap">
+    <div class="footer__grid grid">
+      <div class="footer__brand">
+        <Mark size="2.75rem" />
+        <p class="footer__statement">
+          Advice on the sale, acquisition, valuation and structuring of businesses.
+        </p>
+      </div>
+
+      <nav class="footer__nav" aria-label="Footer">
+        <div class="footer__col">
+          <h2 class="label footer__heading">Expertise</h2>
+          <ul role="list">
+            {
+              services.map((s) => (
+                <li>
+                  <a href={serviceHref(s.id)}>{s.data.name}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h2 class="label footer__heading">Firm</h2>
+          <ul role="list">
+            {
+              firmLinks.map((item) => (
+                <li>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        {
+          (email || phone || offices.length > 0) && (
+            <div class="footer__col">
+              <h2 class="label footer__heading">Contact</h2>
+              <ul role="list">
+                {email && (
+                  <li>
+                    <a href={`mailto:${email}`}>{email}</a>
+                  </li>
+                )}
+                {phone && (
+                  <li>
+                    <a href={`tel:${phone.replace(/\s+/g, '')}`}>{phone}</a>
+                  </li>
+                )}
+                {offices.map((o) => (
+                  <li>{o.city}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </nav>
+    </div>
+
+    <a class="footer__word" href="/" aria-label="BERGWEISS, home">
+      <svg viewBox={wordmarkViewBox} style={`--aspect:${wordmarkAspect}`} aria-hidden="true" focusable="false">
+        <path d={wordmarkPath}></path>
+      </svg>
+    </a>
+
+    <div class="footer__block" aria-label="Sheet information">
+      <dl class="footer__titleblock">
+        <div>
+          <dt class="label">Practice</dt>
+          <dd>{site.descriptor}</dd>
+        </div>
+        <div>
+          <dt class="label">Sheet</dt>
+          <dd>{sheet}</dd>
+        </div>
+        <div>
+          <dt class="label">Issued</dt>
+          <dd class="nums">{year}</dd>
+        </div>
+        <div>
+          <dt class="label">Scale</dt>
+          <dd class="nums">1:1</dd>
+        </div>
+      </dl>
+      <div class="footer__legal">
+        <p class="nums">© {year} {site.legalName ?? site.name}</p>
+        <ul role="list">
+          {
+            legalNav.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="#top">Back to top</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: var(--section-tight);
+    padding-bottom: var(--space-6);
+  }
+
+  .footer__grid {
+    row-gap: var(--space-8);
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+    color: var(--mineral);
+  }
+
+  .footer__statement {
+    font-family: var(--serif);
+    font-size: var(--fs-title);
+    font-weight: 320;
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display);
+    max-width: 16em;
+    text-wrap: balance;
+  }
+
+  .footer__nav {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: var(--space-7) var(--gutter);
+  }
+
+  .footer__heading {
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer__col ul {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .footer__col a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) left 85% / 0 1px no-repeat;
+    transition: background-size var(--dur-3) var(--ease-draft);
+  }
+
+  .footer__col a:hover {
+    background-size: 100% 1px;
+  }
+
+  .footer__word {
+    display: block;
+    margin-top: var(--section-tight);
+    color: var(--mineral);
+  }
+
+  .footer__word svg {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--aspect);
+    fill: currentColor;
+  }
+
+  .footer__block {
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .footer__titleblock {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer__titleblock > div {
+    padding: var(--space-3) var(--space-3) var(--space-3) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .footer__titleblock dt {
+    color: var(--text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  .footer__titleblock dd {
+    font-size: var(--fs-small);
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+    padding-top: var(--space-5);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .footer__legal ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+
+  .footer__legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-block: -0.75rem;
+  }
+
+  @media (min-width: 40em) {
+    .footer__titleblock {
+      grid-template-columns: 2fr 2fr 1fr 1fr;
+    }
+
+    .footer__titleblock > div + div {
+      padding-left: var(--space-3);
+      border-left: 1px solid var(--line);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .footer__brand {
+      grid-column: 1 / span 5;
+    }
+
+    .footer__nav {
+      grid-column: 7 / -1;
+    }
+  }
+</style>

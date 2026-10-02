@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Type-check, build, test, Lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      # A production-like origin so canonical URLs, robots and SEO checks are real.
+      SITE_URL: https://www.example.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end and accessibility tests
+        run: npm test
+
+      - name: Lighthouse budgets
+        run: npm run test:lighthouse
+
+      - name: Upload test artefacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artefacts
+          path: |
+            test-results/
+            .lighthouseci/
+          retention-days: 7

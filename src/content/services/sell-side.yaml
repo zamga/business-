@@ -1,0 +1,89 @@
+order: 1
+ref: S-01
+name: Sell-side advisory
+need: Selling a business
+needFirstPerson: I am considering selling all or part of my business
+headline: 'Selling a business, *on your terms.*'
+intro: >-
+  For most owners, a sale happens once. We prepare the business, run a
+  confidential and competitive process, and negotiate on your behalf until the
+  transaction completes.
+summary: >-
+  A confidential, competitive process to sell all or part of a company, run
+  and negotiated on the seller's behalf from preparation to completion.
+objective: >-
+  To sell all or part of your company to the right party, at the right value
+  and on terms you can accept, while the business keeps performing throughout
+  the process.
+role: >-
+  We act for you as seller. We run the process from first preparation to
+  completion and coordinate your legal, tax and accounting advisers, so the
+  transaction moves as one programme rather than a set of separate workstreams.
+scope:
+  - Exit readiness, timing and the choice between a full or partial sale
+  - Valuation and pricing strategy
+  - Equity story, information memorandum and financial model
+  - Identification of strategic and financial buyers, and a confidential approach to each
+  - Process design and management, including the data room and management presentations
+  - Comparison of offers and negotiation of price and terms
+  - Coordination of due diligence and documentation through signing and completion
+audiences: [owners, families]
+process:
+  - title: Assessment
+    text: >-
+      We test whether, when and how to sell, and agree what a successful
+      outcome looks like for you.
+  - title: Preparation
+    text: >-
+      We build the equity story and the materials, anticipate buyers'
+      questions and resolve issues before they can be used against you.
+  - title: Engagement
+    text: >-
+      We approach a selected group of buyers in confidence: an anonymous
+      profile first, the company's name only under a non-disclosure agreement.
+  - title: Negotiation
+    text: >-
+      We compare offers on more than price (certainty, structure, conditions
+      and the future of the business) and negotiate the best overall result.
+  - title: Completion
+    text: >-
+      We manage due diligence and documentation through signing and closing,
+      keeping momentum and protecting value until the final day.
+questions:
+  - q: When should I speak to an adviser?
+    a: >-
+      Earlier than most owners expect, ideally well before you intend to sell.
+      Time allows issues that affect value, from the quality of reporting to
+      dependence on a few customers, to be addressed rather than discounted.
+      A first conversation commits you to nothing.
+  - q: How is confidentiality protected?
+    a: >-
+      Buyers first receive an anonymised profile. The company's identity and
+      detailed information are shared only under a non-disclosure agreement,
+      and access is staged so the most sensitive information reaches the
+      fewest parties, last.
+  - q: Do I have to sell the whole company?
+    a: >-
+      No. A partial sale, a minority investment or a staged exit can each be
+      structured. The right choice depends on what you want in liquidity,
+      control and the future of the business.
+  - q: When will employees and customers find out?
+    a: >-
+      When you decide. The process is designed so that the transaction is
+      disclosed on your timetable, typically at signing or completion.
+related: [valuation, transaction-structuring, strategic-alternatives]
+drawing: table
+figure:
+  title: Plan — the table
+  caption: >-
+    One seller, a deliberately chosen field of buyers. Parties approached but
+    not invited further are drawn as dashed outlines.
+cta:
+  label: Discuss a sale
+  topic: sell-side
+seo:
+  title: Sell-side advisory — selling a business
+  description: >-
+    BERGWEISS advises owners and family businesses on selling all or part of a
+    company: preparation, a confidential competitive process and negotiation
+    through to completion.

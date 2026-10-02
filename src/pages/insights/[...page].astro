@@ -1,0 +1,128 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import Arrow from '../../components/ui/Arrow.astro';
+import { getInsights, dateFormatter } from '../../lib/content';
+
+/** The index exists only once there is something to read. */
+export const getStaticPaths = (async () => {
+  const insights = await getInsights();
+  return insights.length > 0 ? [{ params: { page: undefined } }] : [];
+}) satisfies GetStaticPaths;
+
+const insights = await getInsights();
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Insights', href: '/insights/' },
+];
+---
+
+<BaseLayout
+  title="Insights"
+  description="Perspectives from BERGWEISS on selling, acquiring, valuing and structuring businesses."
+  sheet="08 — Insights"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Insights" title="Notes on <em>transactions.</em>" sheet="08">
+    <p>Perspectives on selling, acquiring, valuing and structuring businesses.</p>
+  </PageHero>
+
+  <section class="list section--tight">
+    <div class="wrap">
+      <ol role="list" class="articles">
+        {
+          insights.map((entry) => (
+            <li class="article grid">
+              <p class="label article__date nums">
+                <time datetime={entry.data.published.toISOString()}>{dateFormatter.format(entry.data.published)}</time>
+                {entry.data.draft && <span class="article__draft">Draft</span>}
+              </p>
+              <h2 class="article__title">
+                <a class="article__link" href={`/insights/${entry.id}/`}>
+                  {entry.data.title}
+                </a>
+              </h2>
+              <p class="article__dek">{entry.data.dek}</p>
+              <p class="label article__topics">{entry.data.topics.join(' · ')}</p>
+              <Arrow class="article__arrow" />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .list {
+    padding-bottom: var(--section);
+  }
+
+  .articles {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .article {
+    position: relative;
+    row-gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .article > * {
+    grid-column: 1 / -1;
+  }
+
+  .article__date {
+    display: flex;
+    gap: var(--space-3);
+    color: var(--text-muted);
+  }
+
+  .article__draft {
+    color: var(--accent);
+  }
+
+  .article__title {
+    font-size: var(--fs-display-m);
+    font-weight: 300;
+    max-width: 18em;
+  }
+
+  .article__link {
+    text-decoration: none;
+  }
+
+  .article__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .article__dek {
+    color: var(--text-muted);
+    max-width: 36rem;
+  }
+
+  .article__topics {
+    color: var(--text-muted);
+  }
+
+  :global(.article__arrow) {
+    display: none;
+  }
+
+  @media (min-width: 64em) {
+    .article__date {
+      grid-column: 1 / span 3;
+      padding-top: 1em;
+    }
+
+    .article__title,
+    .article__dek,
+    .article__topics {
+      grid-column: 4 / span 8;
+    }
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Prose from '../components/ui/Prose.astro';
+import Pending from '../components/ui/Pending.astro';
+import { site } from '../data/site';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Legal notice', href: '/legal/' },
+];
+const { legal, contact } = site;
+---
+
+<BaseLayout
+  title="Legal notice"
+  description="Legal notice for the BERGWEISS website: provider information, disclaimer, copyright and typeface licences."
+  sheet="06 — Legal notice"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Legal" title="Legal notice" sheet="06" />
+
+  <section class="section--tight legal">
+    <div class="wrap grid">
+      <Prose class="legal__body">
+        <h2>Provider</h2>
+        <dl>
+          <div>
+            <dt>Company</dt>
+            <dd>{site.legalName ?? <Pending what="registered company name" />}</dd>
+          </div>
+          <div>
+            <dt>Registered office</dt>
+            <dd>{legal.registeredOffice ?? <Pending what="registered office address" />}</dd>
+          </div>
+          <div>
+            <dt>Register</dt>
+            <dd>
+              {
+                legal.register && legal.registrationNumber ? (
+                  `${legal.register}, ${legal.registrationNumber}`
+                ) : (
+                  <Pending what="company register and registration number" />
+                )
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>VAT number</dt>
+            <dd>{legal.vatId ?? <Pending what="VAT number, if applicable" />}</dd>
+          </div>
+          <div>
+            <dt>Represented by</dt>
+            <dd>{legal.representedBy ?? <Pending what="directors or managing partners" />}</dd>
+          </div>
+          <div>
+            <dt>Regulatory status</dt>
+            <dd>{legal.regulatoryStatus ?? <Pending what="regulator and permissions, where applicable" />}</dd>
+          </div>
+          <div>
+            <dt>Contact</dt>
+            <dd>
+              {
+                contact.email ? (
+                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                ) : (
+                  <Pending what="contact email address" />
+                )
+              }
+            </dd>
+          </div>
+        </dl>
+
+        <h2>Disclaimer</h2>
+        <p>
+          The content of this website is provided for general information only. It does not constitute investment,
+          legal, tax or financial advice, nor an offer or solicitation to buy or sell any security, business or
+          interest in a business. Advice is given only within a written engagement.
+        </p>
+        <p>
+          We take care to keep this website accurate and current, but we cannot guarantee that its content is complete
+          or up to date at all times, and we accept no liability for decisions made on the basis of it.
+        </p>
+
+        <h2>External links</h2>
+        <p>
+          Where this website links to external websites, we have no control over their content and accept no
+          responsibility for it.
+        </p>
+
+        <h2>Copyright</h2>
+        <p>
+          Text, drawings and the BERGWEISS mark on this website are protected by copyright. They may not be reproduced
+          without our prior written consent.
+        </p>
+
+        <h2>Typefaces</h2>
+        <p>
+          This website uses Newsreader by Production Type and Archivo by Omnibus-Type, both licensed under the SIL Open
+          Font License 1.1 and served from this website.
+        </p>
+      </Prose>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal {
+    padding-bottom: var(--section);
+  }
+
+  :global(.legal__body) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 64em) {
+    :global(.legal__body) {
+      grid-column: 4 / span 7;
+    }
+  }
+</style>

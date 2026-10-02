@@ -1,0 +1,146 @@
+---
+import DrawnMark from '../brand/DrawnMark.astro';
+import Button from './Button.astro';
+import Arrow from './Arrow.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+  topic?: string;
+  cta?: string;
+}
+
+const {
+  title = 'Discuss a <em>transaction.</em>',
+  text = 'Tell us briefly what you are considering. Every enquiry is read in confidence, and a first conversation commits you to nothing.',
+  topic,
+  cta = 'Start the conversation',
+} = Astro.props;
+const href = topic ? `/contact/?topic=${encodeURIComponent(topic)}` : '/contact/';
+---
+
+<section class="closing on-ink" aria-labelledby="closing-title">
+  <div class="wrap grid closing__grid">
+    <p class="closing__label label"><span class="closing__dot" aria-hidden="true"></span>Begin</p>
+    <h2 id="closing-title" class="closing__title" data-reveal>
+      <a href={href} class="closing__title-link" tabindex="-1"><Fragment set:html={title} /></a>
+    </h2>
+    <div class="closing__body" data-reveal style="--reveal-i: 1">
+      <p class="lead">{text}</p>
+      <Button href={href}>{cta}</Button>
+      <ul role="list" class="closing__routes">
+        <li>
+          <a href="/contact/?topic=sell-side">Selling a business <Arrow /></a>
+        </li>
+        <li>
+          <a href="/contact/?topic=buy-side">Acquiring a business <Arrow /></a>
+        </li>
+      </ul>
+    </div>
+    <div class="closing__mark" aria-hidden="true">
+      <DrawnMark uid={`closing-${topic ?? 'default'}`} size="100%" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing {
+    padding-block: var(--section);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .closing__grid {
+    row-gap: var(--space-6);
+    align-items: end;
+  }
+
+  .closing__label {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    color: var(--text-muted);
+  }
+
+  .closing__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+  }
+
+  .closing__title {
+    grid-column: 1 / -1;
+    font-size: clamp(3rem, 1rem + 8vw, 9.5rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+
+  .closing__title-link {
+    text-decoration: none;
+  }
+
+  .closing__title-link:hover :global(em) {
+    color: var(--accent);
+  }
+
+  .closing__title :global(em) {
+    transition: color var(--dur-2) var(--ease-out);
+  }
+
+  .closing__body {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .closing__body .lead {
+    color: var(--text-muted);
+  }
+
+  .closing__routes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    font-size: var(--fs-small);
+  }
+
+  .closing__routes a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: color var(--dur-2) var(--ease-out);
+  }
+
+  .closing__routes a:hover {
+    color: var(--text);
+  }
+
+  .closing__mark {
+    display: none;
+  }
+
+  @media (min-width: 64em) {
+    .closing__title {
+      grid-column: 1 / span 10;
+    }
+
+    .closing__body {
+      grid-column: 1 / span 6;
+    }
+
+    .closing__mark {
+      display: block;
+      grid-column: 10 / span 3;
+      grid-row: 3;
+      align-self: end;
+      width: 100%;
+      max-width: 15rem;
+      justify-self: end;
+    }
+  }
+</style>

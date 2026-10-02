@@ -1,0 +1,47 @@
+---
+import Mark from './Mark.astro';
+import { wordmarkPath, wordmarkViewBox, wordmarkAspect } from './wordmark';
+
+interface Props {
+  href?: string;
+  assemble?: boolean;
+  class?: string;
+}
+
+const { href = '/', assemble = false, class: className } = Astro.props;
+const isHome = Astro.url.pathname === '/';
+---
+
+<a class:list={['logo', className]} href={href} aria-label="BERGWEISS, home" aria-current={isHome ? 'page' : undefined}>
+  <Mark size="1.625rem" assemble={assemble} />
+  <svg
+    class="logo__word"
+    viewBox={wordmarkViewBox}
+    style={`--aspect:${wordmarkAspect}`}
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d={wordmarkPath}></path>
+  </svg>
+</a>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text);
+    text-decoration: none;
+    padding-block: var(--space-2);
+  }
+
+  .logo__word {
+    height: 0.82rem;
+    width: calc(0.82rem * var(--aspect));
+    fill: currentColor;
+  }
+
+  .logo:focus-visible {
+    outline-offset: 6px;
+  }
+</style>

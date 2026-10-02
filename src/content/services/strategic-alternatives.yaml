@@ -1,0 +1,75 @@
+order: 4
+ref: S-04
+name: Strategic alternatives
+need: Weighing the options
+needFirstPerson: I want to understand my options before deciding
+headline: 'Choose the path *before committing to it.*'
+intro: >-
+  Not every question of ownership leads to a sale. We help owners, families
+  and boards compare the realistic options, so the path they take is a
+  deliberate one.
+summary: >-
+  An objective comparison of the realistic ownership options, from family
+  succession to a full sale, with the trade-offs made explicit.
+objective: >-
+  To decide how best to secure the future of the business and its owners, and
+  to understand the consequences of each option before committing to one.
+role: >-
+  We frame the options, assess their value and feasibility, and set out the
+  trade-offs in liquidity, control, risk and timing. When a transaction is the
+  right answer, we can carry it through.
+scope:
+  - 'Review of ownership objectives: liquidity, control, legacy and timing'
+  - 'Options analysis: full or partial sale, family succession, management buy-out, minority investment, acquisition or no change'
+  - Indicative valuation of each option
+  - Assessment of market appetite and likely counterparties
+  - Alignment of shareholders and family members on the chosen path
+  - A roadmap from decision to execution
+audiences: [families, owners, investors]
+process:
+  - title: Objectives
+    text: >-
+      We establish what the owners want to achieve, and where their
+      priorities differ.
+  - title: Options
+    text: >-
+      We set out every realistic path, including the option of not
+      transacting for now.
+  - title: Evidence
+    text: >-
+      We test each option against the market: who would buy, invest or
+      finance, and on what terms.
+  - title: Decision
+    text: >-
+      We bring shareholders to a shared view, with the trade-offs made
+      explicit.
+  - title: Execution
+    text: >-
+      We turn the decision into a plan and, where a transaction follows, lead
+      it.
+questions:
+  - q: We are a family business. Can ownership stay in the family?
+    a: >-
+      Often, yes. Succession within the family, a partial sale to fund a
+      transition between generations, or a minority partner can each be
+      assessed alongside a sale.
+  - q: What if the conclusion is not to transact?
+    a: >-
+      Then that is the advice. A clear decision not to transact now, and an
+      understanding of what would change it, is a valuable outcome in itself.
+related: [sell-side, valuation, transaction-structuring]
+drawing: options
+figure:
+  title: Site plan — the options
+  caption: >-
+    One site, several possible structures. Each option is drawn to the same
+    scale, so the choice is made on equal terms.
+cta:
+  label: Discuss your options
+  topic: strategic-alternatives
+seo:
+  title: Strategic alternatives — weighing ownership options
+  description: >-
+    BERGWEISS helps owners, family businesses and boards compare sale,
+    succession, partial sale and other ownership options before committing to
+    one.

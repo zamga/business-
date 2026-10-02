@@ -1,0 +1,193 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import Drawing from '../drawings/Drawing.astro';
+import Arrow from '../ui/Arrow.astro';
+import Button from '../ui/Button.astro';
+import { getServices, serviceHref } from '../../lib/content';
+
+interface Props {
+  number?: string;
+}
+
+const { number = '03' } = Astro.props;
+const services = await getServices();
+---
+
+<section class="sheets on-ink section" aria-labelledby="expertise-title">
+  <div class="wrap">
+    <SectionHead number={number} label="Expertise" title="Five mandates. <em>One discipline.</em>" id="expertise-title">
+      <p>
+        Each mandate begins with your objective and ends with a transaction that serves it. Choose the one closest to
+        the decision in front of you.
+      </p>
+    </SectionHead>
+
+    <ol class="sheets__list" role="list">
+      {
+        services.map((s, i) => (
+          <li class="sheet" data-reveal style={`--reveal-i:${i}`}>
+            <div class="sheet__head label" aria-hidden="true">
+              <span class="sheet__ref">{s.data.ref}</span>
+              <span>{s.data.figure.title.split(' — ')[0]}</span>
+            </div>
+            <div class="sheet__art">
+              <Drawing kind={s.data.drawing} uid={`home-${s.id}`} />
+            </div>
+            <p class="sheet__name label">{s.data.name}</p>
+            <h3 class="sheet__need">
+              <a class="sheet__link" href={serviceHref(s.id)}>
+                {s.data.need}
+              </a>
+            </h3>
+            <p class="sheet__summary">{s.data.summary}</p>
+            <span class="sheet__more label" aria-hidden="true">
+              View mandate <Arrow />
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="sheets__foot">
+      <Button href="/expertise/" variant="outline">All expertise, by situation</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sheets__list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--gutter);
+    margin-top: var(--space-8);
+  }
+
+  .sheet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line-strong);
+    transition:
+      border-color var(--dur-2) var(--ease-out),
+      background-color var(--dur-2) var(--ease-out);
+  }
+
+  .sheet__head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-muted);
+  }
+
+  .sheet__ref {
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .sheet__name {
+    padding: var(--space-5) var(--space-4) 0;
+    color: var(--text-muted);
+  }
+
+  .sheet__art {
+    padding: var(--space-4) var(--space-4) 0;
+  }
+
+  .sheet__art :global(.base) {
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+
+  .sheet__need {
+    padding: var(--space-2) var(--space-4) 0;
+    font-size: var(--fs-title);
+    font-weight: 330;
+    line-height: 1.08;
+  }
+
+  .sheet__link {
+    text-decoration: none;
+  }
+
+  .sheet__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .sheet__link:focus-visible {
+    outline: none;
+  }
+
+  .sheet:has(.sheet__link:focus-visible) {
+    outline: var(--focus);
+    outline-offset: 3px;
+  }
+
+  .sheet__summary {
+    padding: var(--space-3) var(--space-4) 0;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .sheet__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: auto;
+    padding: var(--space-5) var(--space-4) var(--space-4);
+    color: var(--text);
+  }
+
+  @media (hover: hover) {
+    .sheet:hover {
+      border-color: var(--text);
+      background-color: var(--ink-raised);
+    }
+
+    .sheet:hover .sheet__art :global(.base) {
+      opacity: 0.4;
+    }
+
+    .sheet:hover .sheet__more :global(.arrow) {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  .sheets__foot {
+    margin-top: var(--space-7);
+  }
+
+  @media (min-width: 40em) {
+    .sheets__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sheet:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .sheet:last-child .sheet__art {
+      max-width: 50%;
+    }
+  }
+
+  @media (min-width: 80em) {
+    .sheets__list {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .sheet__need {
+      font-size: clamp(1.5rem, 0.9rem + 0.75vw, 1.875rem);
+    }
+
+    .sheet:last-child {
+      grid-column: auto;
+    }
+
+    .sheet:last-child .sheet__art {
+      max-width: none;
+    }
+  }
+</style>

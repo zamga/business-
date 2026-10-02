@@ -1,0 +1,96 @@
+---
+interface Props {
+  number?: string;
+  label: string;
+  title?: string;
+  id?: string;
+  level?: 'h1' | 'h2';
+  size?: 'l' | 'm';
+}
+
+const { number, label, title, id, level = 'h2', size = 'l' } = Astro.props;
+const Heading = level;
+const hasIntro = Astro.slots.has('default');
+---
+
+<header class:list={['sh', 'grid', `sh--${size}`]}>
+  <span class="sh__rule" data-reveal="line" aria-hidden="true"></span>
+  <p class="sh__label label">
+    {number && <span class="sh__num">{number}</span>}
+    <span>{label}</span>
+  </p>
+  {
+    title && (
+      <Heading class="sh__title" id={id} data-reveal>
+        <Fragment set:html={title} />
+      </Heading>
+    )
+  }
+  {
+    hasIntro && (
+      <div class="sh__intro lead" data-reveal style="--reveal-i: 1">
+        <slot />
+      </div>
+    )
+  }
+</header>
+
+<style>
+  .sh {
+    position: relative;
+    row-gap: var(--space-5);
+    padding-top: var(--space-5);
+  }
+
+  .sh__rule {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  .sh__label {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.9em;
+    color: var(--text-muted);
+  }
+
+  .sh__num {
+    color: var(--accent);
+  }
+
+  .sh__title {
+    grid-column: 1 / -1;
+    font-size: var(--fs-display-l);
+    max-width: 14em;
+  }
+
+  .sh--m .sh__title {
+    font-size: var(--fs-display-m);
+  }
+
+  .sh__intro {
+    grid-column: 1 / -1;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 64em) {
+    .sh {
+      row-gap: var(--space-6);
+    }
+
+    .sh__label {
+      grid-column: 1 / span 3;
+      padding-top: 0.6em;
+    }
+
+    .sh__title {
+      grid-column: 4 / -1;
+    }
+
+    .sh__intro {
+      grid-column: 4 / span 6;
+    }
+  }
+</style>

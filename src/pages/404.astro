@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DrawnMark from '../components/brand/DrawnMark.astro';
+import Arrow from '../components/ui/Arrow.astro';
+
+const routes = [
+  { label: 'Home', href: '/' },
+  { label: 'Expertise', href: '/expertise/' },
+  { label: 'Approach', href: '/approach/' },
+  { label: 'Discuss a transaction', href: '/contact/' },
+];
+---
+
+<BaseLayout
+  title="Sheet not found"
+  description="The page you were looking for is not part of this website."
+  sheet="404 — Not in the set"
+  noindex
+>
+  <section class="nf">
+    <div class="wrap grid nf__grid">
+      <div class="nf__mark" aria-hidden="true">
+        <DrawnMark uid="404" size="100%" omit={['brace']} />
+      </div>
+      <div class="nf__body">
+        <p class="label nf__label">Error 404 · Sheet not found</p>
+        <h1 class="nf__title">This sheet is <em>not in the set.</em></h1>
+        <p class="nf__text">
+          Without its brace, a frame cannot hold. The page may have moved, or the address may be mistyped; these will
+          take you back to solid ground.
+        </p>
+        <ul role="list" class="nf__routes">
+          {
+            routes.map((r) => (
+              <li>
+                <a href={r.href}>
+                  <span>{r.label}</span>
+                  <Arrow />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding-block: var(--section-tight) var(--section);
+  }
+
+  .nf__grid {
+    row-gap: var(--space-8);
+    align-items: center;
+  }
+
+  .nf__mark {
+    grid-column: 1 / span 2;
+    width: 100%;
+    max-width: 12rem;
+  }
+
+  .nf__body {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .nf__label {
+    color: var(--accent);
+  }
+
+  .nf__title {
+    font-size: var(--fs-display-l);
+    font-weight: 300;
+    max-width: 10em;
+  }
+
+  .nf__text {
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+    color: var(--text-muted);
+    max-width: 30rem;
+  }
+
+  .nf__routes {
+    margin-top: var(--space-4);
+    border-top: 1px solid var(--line-strong);
+    max-width: 30rem;
+  }
+
+  .nf__routes li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nf__routes a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 3.25rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .nf__routes a:hover :global(.arrow) {
+    transform: translateX(0.35rem);
+  }
+
+  @media (min-width: 64em) {
+    .nf__mark {
+      grid-column: 1 / span 4;
+      max-width: 22rem;
+    }
+
+    .nf__body {
+      grid-column: 6 / -1;
+    }
+  }
+</style>

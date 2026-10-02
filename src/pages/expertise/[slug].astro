@@ -1,0 +1,482 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntries } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import SectionHead from '../../components/ui/SectionHead.astro';
+import Figure from '../../components/drawings/Figure.astro';
+import Drawing from '../../components/drawings/Drawing.astro';
+import StepMark from '../../components/brand/StepMark.astro';
+import Button from '../../components/ui/Button.astro';
+import Arrow from '../../components/ui/Arrow.astro';
+import Closing from '../../components/ui/Closing.astro';
+import { getServices, serviceHref, type Service } from '../../lib/content';
+import { serviceJsonLd } from '../../lib/seo';
+import { emphasis } from '../../lib/text';
+import { stages } from '../../data/approach';
+import { audienceName } from '../../data/audiences';
+
+export const getStaticPaths = (async () => {
+  const services = await getServices();
+  return services.map((service) => ({ params: { slug: service.id }, props: { service } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+const d = service.data;
+const related = await getEntries(d.related);
+const href = serviceHref(service.id);
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Expertise', href: '/expertise/' },
+  { name: d.name, href },
+];
+const contactHref = `/contact/?topic=${encodeURIComponent(d.cta.topic)}`;
+const sheet = `02.${d.order}`;
+---
+
+<BaseLayout
+  title={d.seo.title}
+  description={d.seo.description}
+  sheet={`${sheet} — ${d.name}`}
+  ogImage={`/og/${service.id}.png`}
+  crumbs={crumbs}
+  jsonLd={[serviceJsonLd({ name: d.name, description: d.seo.description, href }, Astro.site)]}
+>
+  <PageHero crumbs={crumbs} label={`${d.ref} · ${d.name}`} title={emphasis(d.headline)} sheet={sheet}>
+    <p>{d.intro}</p>
+    <Button href={contactHref}>{d.cta.label}</Button>
+  </PageHero>
+
+  <!-- Objective and role, set against the mandate's drawing -->
+  <section class="brief section--tight" aria-label={`${d.name}: objective and role`}>
+    <div class="wrap grid brief__grid">
+      <div class="brief__figure" data-reveal>
+        <Figure
+          kind={d.drawing}
+          uid={`svc-${service.id}`}
+          reference={d.ref}
+          title={d.figure.title}
+          caption={d.figure.caption}
+        />
+      </div>
+      <dl class="brief__facts">
+        <div class="brief__fact" data-reveal style="--reveal-i: 1">
+          <dt class="label">Your objective</dt>
+          <dd>{d.objective}</dd>
+        </div>
+        <div class="brief__fact" data-reveal style="--reveal-i: 2">
+          <dt class="label">Our role</dt>
+          <dd>{d.role}</dd>
+        </div>
+        <div class="brief__fact brief__fact--for" data-reveal style="--reveal-i: 3">
+          <dt class="label">For</dt>
+          <dd>
+            <ul role="list" class="brief__for">
+              {d.audiences.map((a) => <li>{audienceName(a)}</li>)}
+            </ul>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Scope -->
+  <section class="scope section" aria-labelledby="scope-title">
+    <div class="wrap">
+      <SectionHead number="01" label="Scope" title="Scope of support" id="scope-title" size="m" />
+      <ol class="scope__list" role="list">
+        {
+          d.scope.map((item, i) => (
+            <li class="scope__item" data-reveal style={`--reveal-i:${i % 4}`}>
+              <span class="scope__num label nums">{String(i + 1).padStart(2, '0')}</span>
+              <span class="scope__text">{item}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="process section on-ink" aria-labelledby="process-title">
+    <div class="wrap">
+      <SectionHead number="02" label="Process" title="How the mandate runs" id="process-title" size="m">
+        <p>Five stages, each placing one element of the transaction. The structure holds when all five are in place.</p>
+      </SectionHead>
+      <ol class="process__list" role="list">
+        {
+          d.process.map((step, i) => (
+            <li class="step" data-reveal style={`--reveal-i:${i}`}>
+              <div class="step__head">
+                <StepMark active={stages[i]!.member} />
+                <span class="label step__num nums">{stages[i]!.number}</span>
+              </div>
+              <h3 class="step__title">{step.title}</h3>
+              <p class="step__text">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="process__more">
+        <Button href="/approach/" variant="text">
+          The architecture of a transaction
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Questions -->
+  {
+    d.questions.length > 0 && (
+      <section class="faq section" aria-labelledby="faq-title">
+        <div class="wrap">
+          <SectionHead number="03" label="Questions" title="Questions clients ask" id="faq-title" size="m" />
+          <div class="faq__list">
+            {d.questions.map((item) => (
+              <details class="faq__item">
+                <summary class="faq__q">
+                  <span>{item.q}</span>
+                  <span class="faq__icon" aria-hidden="true" />
+                </summary>
+                <div class="faq__a">
+                  <p>{item.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Related -->
+  <section class="related section--tight" aria-labelledby="related-title">
+    <div class="wrap">
+      <SectionHead number="04" label="Related" title="Related mandates" id="related-title" size="m" />
+      <ul class="related__list" role="list">
+        {
+          related.map((r) => (
+            <li class="rel" data-reveal>
+              <div class="rel__art" aria-hidden="true">
+                <Drawing kind={r.data.drawing} uid={`rel-${service.id}-${r.id}`} />
+              </div>
+              <p class="label rel__ref">
+                {r.data.ref} · {r.data.name}
+              </p>
+              <h3 class="rel__title">
+                <a class="rel__link" href={serviceHref(r.id)}>
+                  {r.data.need}
+                </a>
+              </h3>
+              <Arrow class="rel__arrow" />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Closing
+    title={`${emphasis(d.cta.label)} <em>in confidence.</em>`}
+    topic={d.cta.topic}
+    cta="Start the conversation"
+  />
+</BaseLayout>
+
+<style>
+  /* ------------------------------------------------------------ brief */
+  .brief__grid {
+    row-gap: var(--space-8);
+  }
+
+  .brief__figure {
+    grid-column: 1 / -1;
+  }
+
+  .brief__facts {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-7);
+    align-content: start;
+  }
+
+  .brief__fact dt {
+    color: var(--accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .brief__fact dd {
+    font-family: var(--serif);
+    font-size: clamp(1.375rem, 1.1rem + 0.8vw, 1.875rem);
+    font-weight: 330;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .brief__fact--for dd {
+    font-family: var(--sans);
+    font-size: var(--fs-body);
+  }
+
+  .brief__for {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .brief__for li {
+    padding: 0.35em 0.75em;
+    border: 1px solid var(--line-strong);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 64em) {
+    .brief__figure {
+      grid-column: 1 / span 6;
+    }
+
+    .brief__facts {
+      grid-column: 8 / -1;
+      padding-top: var(--space-6);
+    }
+  }
+
+  /* ------------------------------------------------------------ scope */
+  .scope__list {
+    display: grid;
+    margin-top: var(--space-7);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .scope__item {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--fs-lead);
+    line-height: 1.4;
+  }
+
+  .scope__num {
+    padding-top: 0.45em;
+    color: var(--accent);
+  }
+
+  @media (min-width: 64em) {
+    .scope__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--gutter);
+      margin-left: calc((100% - 11 * var(--gutter)) / 12 * 3 + 3 * var(--gutter));
+    }
+  }
+
+  /* ------------------------------------------------------------ process */
+  .process__list {
+    display: grid;
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .step {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .step__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .step__num {
+    color: var(--accent);
+  }
+
+  .step__title {
+    font-size: var(--fs-title);
+    font-weight: 320;
+  }
+
+  .step__text {
+    color: var(--text-muted);
+    max-width: 30rem;
+  }
+
+  .process__more {
+    margin-top: var(--space-7);
+  }
+
+  @media (min-width: 64em) {
+    .process__list {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step {
+      padding: var(--space-6) var(--gutter) var(--space-7);
+      border-bottom: 0;
+      border-left: 1px solid var(--line);
+      gap: var(--space-4);
+    }
+
+    .step:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .step__head {
+      margin-bottom: var(--space-6);
+    }
+  }
+
+  /* ------------------------------------------------------------ faq */
+  .faq__list {
+    margin-top: var(--space-7);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .faq__item {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .faq__q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-5);
+    min-height: 3rem;
+    padding-block: var(--space-5);
+    font-family: var(--serif);
+    font-size: var(--fs-title);
+    font-weight: 320;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__q:hover {
+    color: color-mix(in srgb, var(--text) 75%, var(--accent));
+  }
+
+  .faq__icon {
+    position: relative;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: currentColor;
+    transition: rotate var(--dur-2) var(--ease-out);
+  }
+
+  .faq__icon::after {
+    rotate: 90deg;
+  }
+
+  .faq__item[open] .faq__icon::after {
+    rotate: 0deg;
+  }
+
+  .faq__a {
+    padding-bottom: var(--space-6);
+    max-width: 40rem;
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 64em) {
+    .faq__list {
+      margin-left: calc((100% - 11 * var(--gutter)) / 12 * 3 + 3 * var(--gutter));
+    }
+  }
+
+  /* ------------------------------------------------------------ related */
+  .related {
+    padding-bottom: var(--section);
+  }
+
+  .related__list {
+    display: grid;
+    gap: var(--gutter);
+    margin-top: var(--space-7);
+  }
+
+  .rel {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border: 1px solid var(--line-strong);
+    transition: border-color var(--dur-2) var(--ease-out);
+  }
+
+  .rel__art {
+    max-width: 12rem;
+    margin-bottom: var(--space-3);
+  }
+
+  .rel__ref {
+    color: var(--text-muted);
+  }
+
+  .rel__title {
+    font-size: var(--fs-title);
+    font-weight: 320;
+  }
+
+  .rel__link {
+    text-decoration: none;
+  }
+
+  .rel__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .rel__link:focus-visible {
+    outline: none;
+  }
+
+  .rel:has(.rel__link:focus-visible) {
+    outline: var(--focus);
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    .rel:hover {
+      border-color: var(--text);
+    }
+
+    .rel:hover :global(.rel__arrow) {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  @media (min-width: 40em) {
+    .related__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -1,0 +1,345 @@
+---
+import DrawnMark from '../brand/DrawnMark.astro';
+import Button from '../ui/Button.astro';
+import TitleBlock from './TitleBlock.astro';
+import { site } from '../../data/site';
+
+const axes = ['A', 'B', 'C', 'D', 'E'];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero__wrap">
+    <!-- Structural grid: five axes, aligned to the layout columns. -->
+    <div class="hero__axes grid" aria-hidden="true">
+      {
+        axes.map((letter, i) => (
+          <span class="axis" style={`--a:${i}`}>
+            <span class="axis__bubble">{letter}</span>
+          </span>
+        ))
+      }
+    </div>
+
+    <div class="hero__sheet">
+      <p class="hero__kicker label">{site.descriptor}</p>
+
+      <h1 id="hero-title" class="hero__title">
+        <span class="hero__line hero__line--1"><span class="hero__mask">Strategic decisions.</span></span>
+        <span class="hero__line hero__line--2">
+          <span class="hero__glyph" aria-hidden="true">
+            <DrawnMark uid="hero" size="100%" assemble />
+          </span>
+          <span class="hero__mask hero__italic">Precisely executed.</span>
+        </span>
+      </h1>
+
+      <div class="hero__lower grid">
+        <div class="hero__intro">
+          <p class="hero__lead">
+            M&amp;A advice for business owners, acquirers and investors navigating their next transaction.
+          </p>
+          <div class="hero__actions">
+            <Button href="/contact/">Discuss a transaction</Button>
+            <Button href="/expertise/" variant="outline">Explore our expertise</Button>
+          </div>
+        </div>
+        <TitleBlock class="hero__block" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: clip;
+  }
+
+  .hero__wrap {
+    position: relative;
+  }
+
+  /* ----------------------------------------------------------- axes */
+  .hero__axes {
+    position: absolute;
+    inset: 0 var(--margin);
+    grid-template-rows: 100%;
+    pointer-events: none;
+    --ax-0: 1;
+    --ax-1: 2;
+    --ax-2: 3;
+    --ax-3: 4;
+  }
+
+  .axis {
+    position: relative;
+    grid-row: 1;
+    grid-column: var(--col) / span 1;
+    justify-self: start;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--rule) 0, var(--rule) calc(100% - 3rem), transparent);
+  }
+
+  .axis:nth-child(1) {
+    --col: var(--ax-0);
+  }
+
+  .axis:nth-child(2) {
+    --col: var(--ax-1);
+  }
+
+  .axis:nth-child(3) {
+    --col: var(--ax-2);
+  }
+
+  .axis:nth-child(4) {
+    --col: var(--ax-3);
+  }
+
+  .axis:nth-child(5) {
+    grid-column: -2 / -1;
+    justify-self: end;
+  }
+
+  .axis__bubble {
+    position: absolute;
+    top: var(--space-4);
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: -0.75rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 50%;
+    background: var(--mineral);
+    font-size: 0.625rem;
+    font-weight: 560;
+    letter-spacing: 0.04em;
+    color: var(--stone);
+  }
+
+  .axis:nth-child(1) .axis__bubble {
+    left: 0;
+  }
+
+  .axis:nth-child(5) .axis__bubble {
+    left: auto;
+    right: 0;
+    margin: 0 -0.75rem 0 0;
+  }
+
+  @media (min-width: 40em) {
+    .hero__axes {
+      --ax-1: 3;
+      --ax-2: 5;
+      --ax-3: 7;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .hero__axes {
+      --ax-1: 4;
+      --ax-2: 7;
+      --ax-3: 10;
+    }
+  }
+
+  /* ----------------------------------------------------------- sheet */
+  .hero__sheet {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Full viewport on landscape screens; proportional on tall ones, so the
+       sheet never opens a void between headline and title block. */
+    min-height: min(calc(100svh - var(--header-h)), calc(20rem + 55vw));
+    padding-top: calc(var(--space-4) + 1.5rem + var(--space-6));
+    padding-bottom: var(--space-7);
+  }
+
+  .hero__kicker {
+    color: var(--stone);
+  }
+
+  .hero__title {
+    --fs: var(--fs-hero);
+    margin-top: var(--space-5);
+    font-size: var(--fs);
+    font-weight: 300;
+    line-height: 0.93;
+    letter-spacing: -0.024em;
+    text-wrap: initial;
+  }
+
+  .hero__line {
+    display: block;
+  }
+
+  .hero__line--2 {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--b-offset) auto;
+    align-items: center;
+    /* The second phrase starts on axis B. */
+    --b-offset: calc((100% - 3 * var(--gutter)) / 4 + var(--gutter));
+  }
+
+  .hero__italic {
+    font-style: italic;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    grid-column: 2;
+  }
+
+  .hero__glyph {
+    grid-column: 1;
+    width: 0.67em;
+    max-width: calc(100% - var(--gutter));
+    aspect-ratio: 1;
+    align-self: start;
+    margin-top: 0.03em;
+    font-size: var(--fs);
+    color: var(--ink);
+  }
+
+  .hero__mask {
+    display: inline-block;
+  }
+
+  .hero__lower {
+    margin-top: auto;
+    padding-top: var(--space-7);
+    row-gap: var(--space-7);
+  }
+
+  .hero__intro {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
+  }
+
+  .hero__lead {
+    font-size: var(--fs-lead);
+    line-height: 1.38;
+    max-width: 24em;
+    text-wrap: pretty;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  :global(.hero__block) {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 39.99em) {
+    .hero__actions :global(.btn) {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media (min-width: 40em) {
+    .hero__title :global(.hero__line) {
+      white-space: nowrap;
+    }
+
+    .hero__line--2 {
+      --b-offset: calc((100% - 7 * var(--gutter)) / 8 * 2 + 2 * var(--gutter));
+    }
+
+    .hero__intro {
+      grid-column: 1 / span 4;
+    }
+
+    :global(.hero__block) {
+      grid-column: 5 / -1;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .hero__sheet {
+      padding-top: calc(var(--space-4) + 1.5rem + var(--space-7));
+    }
+
+    .hero__line--2 {
+      --b-offset: calc((100% - 11 * var(--gutter)) / 12 * 3 + 3 * var(--gutter));
+    }
+
+    .hero__intro {
+      grid-column: 1 / span 5;
+    }
+
+    :global(.hero__block) {
+      grid-column: 7 / -1;
+      align-self: end;
+    }
+  }
+
+  /* ----------------------------------------------------------- load sequence */
+  @media (prefers-reduced-motion: no-preference) {
+    .axis {
+      animation: axis-draw var(--dur-5) var(--ease-draft) both;
+      animation-delay: calc(var(--a) * 70ms);
+      transform-origin: top center;
+    }
+
+    .axis__bubble {
+      animation: fade-in var(--dur-3) var(--ease-out) both;
+      animation-delay: calc(300ms + var(--a) * 70ms);
+    }
+
+    .hero__line {
+      overflow: clip;
+      overflow-clip-margin: 0.2em;
+      padding-bottom: 0.14em;
+      margin-bottom: -0.14em;
+    }
+
+    .hero__mask {
+      animation: rise 1100ms var(--ease-draft) both;
+    }
+
+    .hero__line--2 .hero__mask {
+      animation-delay: 120ms;
+    }
+
+    .hero__kicker,
+    .hero__intro {
+      animation: fade-up 900ms var(--ease-out) both;
+    }
+
+    .hero__intro {
+      animation-delay: 320ms;
+    }
+  }
+
+  @keyframes axis-draw {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      transform: translate3d(0, 105%, 0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.75rem, 0);
+    }
+  }
+</style>

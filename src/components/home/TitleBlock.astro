@@ -1,0 +1,115 @@
+---
+/**
+ * The firm at a glance, set as the title block of a drawing sheet:
+ * what we do, for whom, through which mandates, in what role.
+ */
+import { getServices, serviceHref } from '../../lib/content';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const services = await getServices();
+const shortNames: Record<string, string> = {
+  'sell-side': 'Sale',
+  'buy-side': 'Acquisition',
+  valuation: 'Valuation',
+  'strategic-alternatives': 'Strategic alternatives',
+  'transaction-structuring': 'Structuring',
+};
+---
+
+<aside class:list={['tb', className]} aria-label="BERGWEISS at a glance">
+  <dl class="tb__list">
+    <div class="tb__row">
+      <dt class="label">Practice</dt>
+      <dd>Mergers &amp; acquisitions advisory</dd>
+    </div>
+    <div class="tb__row">
+      <dt class="label">We act for</dt>
+      <dd>Business owners, family businesses, acquirers, family offices and private equity</dd>
+    </div>
+    <div class="tb__row">
+      <dt class="label">Mandates</dt>
+      <dd>
+        <ul role="list" class="tb__mandates">
+          {
+            services.map((s) => (
+              <li>
+                <a href={serviceHref(s.id)}>{shortNames[s.id] ?? s.data.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </dd>
+    </div>
+    <div class="tb__row">
+      <dt class="label">Our role</dt>
+      <dd>Adviser. The capital, and the decision, remain yours.</dd>
+    </div>
+  </dl>
+</aside>
+
+<style>
+  .tb {
+    border-top: 1px solid var(--line-strong);
+    font-size: var(--fs-small);
+    line-height: 1.45;
+  }
+
+  .tb__row {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: var(--space-4);
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tb__row dt {
+    padding-top: 0.2em;
+    color: var(--text-muted);
+  }
+
+  .tb__mandates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.35rem;
+  }
+
+  .tb__mandates li:not(:last-child)::after {
+    content: '·';
+    margin-left: 0.35rem;
+    color: var(--text-muted);
+  }
+
+  .tb__mandates a {
+    text-decoration-color: var(--line-strong);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tb__row {
+      animation: tb-in 800ms var(--ease-out) both;
+      animation-delay: calc(420ms + var(--r, 0) * 80ms);
+    }
+
+    .tb__row:nth-child(2) {
+      --r: 1;
+    }
+
+    .tb__row:nth-child(3) {
+      --r: 2;
+    }
+
+    .tb__row:nth-child(4) {
+      --r: 3;
+    }
+  }
+
+  @keyframes tb-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.5rem, 0);
+    }
+  }
+</style>
