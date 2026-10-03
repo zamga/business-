@@ -36,7 +36,7 @@ The first version told the idea in drawings alone. The second builds it: the mar
 
 Direction A wins because it is ownable (the mark is the idea), honest (it explains the process instead of decorating it), and fast.
 
-v2 takes one thing from Direction B: the WebGL model, but only as the drawing set's own subject, never as a walk-through. Its cost is contained. Phones get a pre-rendered poster and a four-second film. The 3D scene loads only on landscape screens with a mouse, after the first paint, and steps back to the poster if the device cannot hold its frame rate.
+v2 takes one thing from Direction B: the WebGL model, but only as the drawing set's own subject, never as a walk-through. Its cost is contained. Phones get a pre-rendered poster and a four-second film. The 3D scene loads only on landscape screens with a mouse and a hardware-accelerated GPU, after the first paint, and steps back to the poster if the device cannot hold its frame rate.
 
 ### Category clichés, deliberately broken
 

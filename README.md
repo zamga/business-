@@ -12,7 +12,7 @@ The concept, **the architecture of a transaction**, treats the site as a set of 
 | Language | TypeScript (`astro/tsconfigs/strictest`) | The content model is typed end to end; `npm run check` must stay at zero errors. |
 | Styling | Plain CSS with cascade layers and design tokens | A bespoke system; no framework classes to fight. |
 | Motion | CSS transitions and keyframes, plus small inline TypeScript modules (intro, cursor, reveals, gallery, film) | Transform, opacity and clip-path only; no animation library; scrolling is always native. |
-| 3D | [three.js](https://threejs.org) r186, loaded on demand | Only on landscape screens with a mouse and WebGL 2, after the poster has painted (140 KB gzipped). Phones, reduced motion and Save-Data never download it. |
+| 3D | [three.js](https://threejs.org) r186, loaded on demand | Only on landscape screens with a mouse and hardware-accelerated WebGL 2, after the poster has painted (140 KB gzipped). Phones, software renderers, reduced motion and Save-Data never run it. |
 | Imagery | Model photography and film rendered in-house from the same 3D scene | Headless Chromium renders the stills and film frames; `sharp` writes the masters; Astro's image pipeline serves AVIF/WebP at responsive sizes; `ffmpeg` encodes MP4 (H.264) and WebM (VP9). |
 | Page transitions | Cross-document View Transitions (`@view-transition`) | A redline brace wipes across the screen; no router script; other browsers navigate normally. |
 | Navigation speed | Speculation Rules (`prerender`, moderate eagerness) | Near-instant page changes in Chromium; ignored elsewhere. |

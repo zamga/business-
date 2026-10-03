@@ -2,8 +2,9 @@
  * Chooses how the home hero shows the model, and loads the 3D scene only
  * when it will actually run:
  *
- * - Landscape screen with a mouse and WebGL 2: the live scene (three.js,
- *   loaded on demand) takes over from the identically framed poster.
+ * - Landscape screen with a mouse and a hardware-accelerated WebGL 2: the
+ *   live scene (three.js, loaded on demand) takes over from the identically
+ *   framed poster. Software renderers keep the poster.
  * - Portrait screen, first page of the visit: a four-second film of the
  *   structure assembling, ending on the poster's exact frame.
  * - Reduced motion, Save-Data, or anything failing: the poster stays.
@@ -65,6 +66,7 @@ async function live(hero: HTMLElement, landscape: MediaQueryList): Promise<void>
   // A first visit loads straight away, under cover of the intro; later
   // visits wait until the page is idle so the poster stays the first paint.
   if (!firstVisit) await idle();
+  if (!acceleratedWebGL()) return;
 
   let exploded = false;
   try {
@@ -101,6 +103,24 @@ async function live(hero: HTMLElement, landscape: MediaQueryList): Promise<void>
     }
   } catch {
     hero.classList.remove('is-live');
+  }
+}
+
+/**
+ * True only when WebGL 2 runs on a real GPU. Software rasterisers (a
+ * blocklisted GPU, a virtual machine, headless browsers) would stall the
+ * page for seconds, so those devices keep the poster.
+ */
+function acceleratedWebGL(): boolean {
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+    if (!gl) return false;
+    const info = gl.getExtension('WEBGL_debug_renderer_info');
+    const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return !/swiftshader|llvmpipe|softpipe|software|basic render|microsoft basic/i.test(renderer);
+  } catch {
+    return false;
   }
 }
 

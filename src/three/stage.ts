@@ -256,6 +256,8 @@ export class Stage {
       antialias: false,
       alpha: false,
       powerPreference: 'high-performance',
+      // Live, a software renderer would stall the page; offline it is the renderer.
+      failIfMajorPerformanceCaveat: !offline,
       preserveDrawingBuffer: options.preserveDrawingBuffer ?? false,
     });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.maxPixelRatio ?? 2));
