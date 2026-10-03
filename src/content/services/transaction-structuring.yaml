@@ -1,0 +1,81 @@
+order: 5
+ref: S-05
+name: Transaction structuring
+need: Structuring the deal
+needFirstPerson: I need to structure or restructure a transaction
+headline: 'A structure *every party can sign.*'
+intro: >-
+  Price is only part of a transaction. How consideration is paid, how risk is
+  shared and how control passes often matter as much. We design structures
+  that close the gap between what each side needs.
+summary: >-
+  The commercial architecture of a deal: consideration, risk allocation,
+  reinvestment, governance and the protections behind them.
+objective: >-
+  To agree terms that deliver value, allocate risk sensibly and work for every
+  party who must sign, at completion and in the years after it.
+role: >-
+  We design and negotiate the commercial structure of the transaction
+  alongside your legal and tax advisers, so the economics and the
+  documentation say the same thing.
+scope:
+  - 'Form and timing of consideration: cash, shares, deferred and contingent payments'
+  - Earn-outs and vendor financing where they bridge a gap in valuation
+  - Reinvestment by sellers and management
+  - Minority investments and shareholder arrangements
+  - Governance, control and exit rights
+  - Commercial protections, from warranties and indemnities to locked-box or completion-accounts mechanisms
+audiences: [owners, families, acquirers, investors]
+process:
+  - title: Priorities
+    text: >-
+      We establish what each party needs: value, certainty, control, timing
+      and tax efficiency.
+  - title: Design
+    text: >-
+      We model alternative structures and how each performs under different
+      outcomes.
+  - title: Alignment
+    text: >-
+      We test structures with the other side early, before positions harden.
+  - title: Negotiation
+    text: >-
+      We negotiate the commercial terms and protections, line by line where it
+      matters.
+  - title: Documentation
+    text: >-
+      We work with your lawyers until the agreement reflects the deal that was
+      negotiated.
+questions:
+  - q: What is an earn-out, and when does it make sense?
+    a: >-
+      Part of the price is paid later, depending on how the business performs.
+      It can bridge a gap between the seller's and the buyer's expectations,
+      but only works when the measures are clear and the seller can still
+      influence them.
+  - q: Do you replace our lawyers or tax advisers?
+    a: >-
+      No. We lead the commercial structure and its negotiation and work
+      alongside your legal and tax advisers, who remain responsible for legal
+      and tax advice.
+related: [sell-side, buy-side, valuation]
+drawing: section
+figure:
+  title: Section — the layers
+  caption: >-
+    Consideration drawn in section: what is paid at completion, what is
+    deferred, what depends on performance, and the governance that ties the
+    layers together.
+model:
+  key: layers
+  caption: >-
+    Each layer tied by its own brace: price, payment, ownership and risk, structured so the whole holds.
+cta:
+  label: Discuss a structure
+  topic: transaction-structuring
+seo:
+  title: Transaction structuring — the architecture of a deal
+  description: >-
+    BERGWEISS designs and negotiates transaction structures: consideration,
+    earn-outs, vendor financing, reinvestment, governance and commercial
+    protections.

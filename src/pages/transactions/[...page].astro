@@ -1,0 +1,127 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import { getPublishedTransactions, getServices, serviceHref } from '../../lib/content';
+
+/** Generated only when publishable, consented transactions exist. */
+export const getStaticPaths = (async () => {
+  const transactions = await getPublishedTransactions();
+  return transactions.length > 0 ? [{ params: { page: undefined } }] : [];
+}) satisfies GetStaticPaths;
+
+const transactions = await getPublishedTransactions();
+const services = await getServices();
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Transactions', href: '/transactions/' },
+];
+
+const rows = await Promise.all(
+  transactions.map(async (t) => {
+    const person = t.data.teamMember ? await getEntry(t.data.teamMember) : undefined;
+    const service = services.find((s) => s.id === t.data.mandate.id);
+    return { t, person, service };
+  }),
+);
+const firm = rows.filter((r) => r.t.data.attribution === 'firm');
+const prior = rows.filter((r) => r.t.data.attribution === 'prior-experience');
+---
+
+<BaseLayout
+  title="Selected transactions"
+  description="Selected transactions advised on by BERGWEISS, published with client consent."
+  sheet="09 — Transactions"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Transactions" title="Selected <em>transactions.</em>" sheet="09">
+    <p>
+      Published with our clients' consent. Transactions completed by BERGWEISS are listed separately from experience
+      our team gained before joining the firm.
+    </p>
+  </PageHero>
+
+  {
+    [
+      { title: 'Completed by BERGWEISS', items: firm },
+      { title: 'Prior experience of our team', items: prior },
+    ]
+      .filter((group) => group.items.length > 0)
+      .map((group) => (
+        <section class="tx section--tight" aria-label={group.title}>
+          <div class="wrap">
+            <h2 class="label tx__group">{group.title}</h2>
+            <ul role="list" class="tx__list">
+              {group.items.map(({ t, person, service }) => (
+                <li class="tx__item grid">
+                  <p class="label tx__year nums">{t.data.year}</p>
+                  <h3 class="tx__title">{t.data.title}</h3>
+                  <p class="tx__summary">{t.data.summary}</p>
+                  <p class="label tx__meta">
+                    {service && <a href={serviceHref(service.id)}>{service.data.name}</a>} · {t.data.sector}
+                    {person && <> · {person.data.name}, before joining BERGWEISS</>}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ))
+  }
+</BaseLayout>
+
+<style>
+  .tx__group {
+    color: var(--text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .tx__list {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .tx__item {
+    row-gap: var(--space-2);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tx__item > * {
+    grid-column: 1 / -1;
+  }
+
+  .tx__year {
+    color: var(--accent);
+  }
+
+  .tx__title {
+    font-size: var(--fs-title);
+    font-weight: 320;
+  }
+
+  .tx__summary,
+  .tx__meta {
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 64em) {
+    .tx__year {
+      grid-column: 1 / span 2;
+    }
+
+    .tx__title {
+      grid-column: 3 / span 5;
+      grid-row: 1;
+    }
+
+    .tx__summary {
+      grid-column: 8 / span 5;
+      grid-row: 1;
+    }
+
+    .tx__meta {
+      grid-column: 3 / -1;
+    }
+  }
+</style>

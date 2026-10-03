@@ -1,0 +1,382 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import SectionHead from '../components/ui/SectionHead.astro';
+import Principles from '../components/home/Principles.astro';
+import Closing from '../components/ui/Closing.astro';
+import Contours from '../components/drawings/Contours.astro';
+import ModelFigure from '../components/media/ModelFigure.astro';
+import { getServices, getTeam, serviceHref } from '../lib/content';
+import { audiences } from '../data/audiences';
+
+const services = await getServices();
+const team = await getTeam();
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Firm', href: '/firm/' },
+];
+
+const engagement = [
+  {
+    title: 'A confidential conversation',
+    text: 'Tell us what you are considering. There is no obligation and nothing to prepare.',
+  },
+  {
+    title: 'An initial view',
+    text: 'We set out how we see the situation, the realistic options and whether we are the right adviser for it.',
+  },
+  {
+    title: 'A mandate',
+    text: 'If we proceed, scope, team and terms are agreed in an engagement letter before work begins.',
+  },
+];
+---
+
+<BaseLayout
+  title="The firm"
+  description="BERGWEISS is an M&A advisory firm acting for business owners, family businesses, acquirers, family offices and private equity investors."
+  sheet="04 — The firm"
+  ogImage="/og/firm.png"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="The firm" title="An adviser at the table, <em>on your side of it.</em>" sheet="04" wide>
+    <p>
+      BERGWEISS is an M&amp;A advisory firm. We advise business owners, family businesses, acquirers, family offices
+      and private equity investors on the sale, acquisition, valuation and structuring of businesses.
+    </p>
+  </PageHero>
+
+  <section class="role section--tight" aria-labelledby="role-title">
+    <div class="role__terrain" aria-hidden="true">
+      <Contours uid="firm" />
+    </div>
+    <div class="wrap grid role__grid">
+      <p class="role__label label"><span class="role__num">01</span> Our role</p>
+      <h2 id="role-title" class="role__statement" data-reveal>
+        Our role is advisory. In each mandate we represent the client who appointed us; <em
+          >the capital in the transaction, and the decision to commit it, remain theirs.</em
+        >
+      </h2>
+
+      <div class="role__cols">
+        <div class="role__col" data-reveal style="--reveal-i: 1">
+          <h3 class="label role__col-title">What we advise on</h3>
+          <ul role="list">
+            {
+              services.map((s) => (
+                <li>
+                  <a href={serviceHref(s.id)}>{s.data.name}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="role__col" data-reveal style="--reveal-i: 2">
+          <h3 class="label role__col-title">Who we act for</h3>
+          <ul role="list">
+            {audiences.map((a) => <li>{a.name}</li>)}
+          </ul>
+        </div>
+        <div class="role__col" data-reveal style="--reveal-i: 3">
+          <h3 class="label role__col-title">Alongside your advisers</h3>
+          <p>
+            We work with your lawyers, accountants and tax advisers and coordinate the transaction as one programme.
+            Legal and tax advice remain theirs to give.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="elevation section--tight" aria-labelledby="elevation-title">
+    <div class="wrap grid elevation__grid">
+      <div class="elevation__text" data-reveal>
+        <p class="label elevation__label">The mark</p>
+        <h2 id="elevation-title" class="elevation__title">A structure <em>that holds.</em></h2>
+        <p class="elevation__body">
+          Seen straight on, the model is our mark: a foundation, two columns, a beam, and the brace that makes the
+          frame rigid. Strategy, valuation, counterparties, terms and execution, in that order.
+        </p>
+      </div>
+      <ModelFigure
+        class="elevation__plate"
+        model="front"
+        sizes="(min-width: 64em) 45vw, (min-width: 40em) 60vw, 100vw"
+        caption="Elevation: the five members, assembled."
+      />
+    </div>
+  </section>
+
+  <Principles number="02" detailed title="What we hold to" />
+
+  <section class="engage section" aria-labelledby="engage-title">
+    <div class="wrap">
+      <SectionHead number="03" label="Engagement" title="How an engagement begins" id="engage-title" size="m" />
+      <ol class="engage__list" role="list">
+        {
+          engagement.map((step, i) => (
+            <li class="engage__step" data-reveal style={`--reveal-i:${i}`}>
+              <span class="engage__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="engage__title">{step.title}</h3>
+              <p class="engage__text">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {
+    team.length > 0 && (
+      <section class="team section" aria-labelledby="team-title">
+        <div class="wrap">
+          <SectionHead number="04" label="People" title="The team" id="team-title" size="m" />
+          <ul class="team__list" role="list">
+            {team.map((person) => (
+              <li class="person">
+                <h3 class="person__name">{person.data.name}</h3>
+                <p class="label person__role">{person.data.role}</p>
+                <p class="person__bio">{person.data.bio}</p>
+                {person.data.priorExperience && (
+                  <p class="person__prior">
+                    <span class="label">Before BERGWEISS</span> {person.data.priorExperience}
+                  </p>
+                )}
+                {person.data.focus.length > 0 && (
+                  <p class="person__focus">
+                    <span class="label">Focus</span> {person.data.focus.join(' · ')}
+                  </p>
+                )}
+                {person.data.linkedin && <a href={person.data.linkedin}>LinkedIn profile</a>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <Closing />
+</BaseLayout>
+
+<style>
+  .role {
+    position: relative;
+    overflow: clip;
+  }
+
+  .role__terrain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  .role__grid {
+    position: relative;
+    row-gap: var(--space-7);
+    padding-top: var(--space-5);
+    background: linear-gradient(var(--line-strong) 0 0) content-box top / 100% 1px no-repeat;
+  }
+
+  .role__label {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.9em;
+    color: var(--text-muted);
+  }
+
+  .role__num {
+    color: var(--accent);
+  }
+
+  .role__statement {
+    grid-column: 1 / -1;
+    font-size: var(--fs-statement);
+    font-weight: 320;
+    line-height: 1.16;
+    letter-spacing: -0.016em;
+    max-width: 22em;
+    text-wrap: pretty;
+  }
+
+  .role__cols {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-7) var(--gutter);
+  }
+
+  .role__col-title {
+    color: var(--text-muted);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-3);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .role__col ul {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .role__col a {
+    text-decoration-color: var(--line-strong);
+  }
+
+  @media (min-width: 40em) {
+    .role__cols {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64em) {
+    .role__label {
+      grid-column: 1 / span 3;
+      padding-top: 0.9em;
+    }
+
+    .role__statement,
+    .role__cols {
+      grid-column: 4 / -1;
+    }
+  }
+
+  /* ------------------------------------------------------------ engagement */
+  .engage__list {
+    display: grid;
+    margin-top: var(--space-7);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .engage__step {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .engage__num {
+    font-family: var(--serif);
+    font-size: var(--fs-display-m);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .engage__title {
+    font-size: var(--fs-title);
+    font-weight: 320;
+  }
+
+  .engage__text {
+    color: var(--text-muted);
+    max-width: 28rem;
+  }
+
+  @media (min-width: 64em) {
+    .engage__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-left: calc((100% - 11 * var(--gutter)) / 12 * 3 + 3 * var(--gutter));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .engage__step {
+      padding: var(--space-6) var(--gutter) var(--space-7);
+      border-bottom: 0;
+      border-left: 1px solid var(--line);
+    }
+
+    .engage__step:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  /* ------------------------------------------------------------ team */
+  .team__list {
+    display: grid;
+    gap: var(--space-7) var(--gutter);
+    margin-top: var(--space-7);
+  }
+
+  .person {
+    display: grid;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .person__name {
+    font-size: var(--fs-title);
+    font-weight: 320;
+  }
+
+  .person__role {
+    color: var(--accent);
+  }
+
+  .person__prior,
+  .person__focus {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 40em) {
+    .team__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64em) {
+    .team__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ------------------------------------------------------------ elevation */
+  .elevation__grid {
+    row-gap: var(--space-7);
+    align-items: end;
+  }
+
+  .elevation__text {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .elevation__label {
+    color: var(--accent);
+  }
+
+  .elevation__title {
+    font-size: var(--fs-display-m);
+    font-weight: 300;
+  }
+
+  .elevation__body {
+    max-width: 30rem;
+    color: var(--text-muted);
+  }
+
+  :global(.elevation__plate) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 40em) {
+    :global(.elevation__plate) {
+      grid-column: 3 / -1;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .elevation__text {
+      grid-column: 1 / span 5;
+      padding-bottom: var(--space-8);
+    }
+
+    :global(.elevation__plate) {
+      grid-column: 7 / -1;
+    }
+  }
+</style>

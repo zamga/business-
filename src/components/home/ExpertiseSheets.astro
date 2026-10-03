@@ -1,0 +1,307 @@
+---
+/**
+ * The five mandates as a gallery of model photographs. On large screens the
+ * gallery pins under the header and travels sideways as the page scrolls:
+ * scrolling stays native, the track only follows it. Each plate keeps its
+ * render's own proportions, so the rhythm reads like a hung exhibition.
+ * On small screens, with reduced motion or without JavaScript, it is a
+ * plain list.
+ */
+import { Picture } from 'astro:assets';
+import SectionHead from '../ui/SectionHead.astro';
+import Arrow from '../ui/Arrow.astro';
+import Button from '../ui/Button.astro';
+import { getServices, serviceHref } from '../../lib/content';
+import { models } from '../../data/models';
+
+interface Props {
+  number?: string;
+}
+
+const { number = '03' } = Astro.props;
+const services = await getServices();
+---
+
+<section class="xp on-ink" data-gallery aria-labelledby="expertise-title">
+  <div class="xp__pin" data-gallery-pin>
+    <div class="xp__track" data-gallery-track>
+      <div class="xp__intro">
+        <SectionHead number={number} label="Expertise" title="Five mandates. <em>One discipline.</em>" id="expertise-title">
+          <p>
+            Each mandate begins with your objective and ends with a transaction that serves it. Choose the one closest
+            to the decision in front of you.
+          </p>
+        </SectionHead>
+        <div class="xp__foot">
+          <Button href="/expertise/" variant="outline">All expertise, by situation</Button>
+        </div>
+      </div>
+
+      <ol class="xp__list" role="list">
+        {
+          services.map((s, i) => {
+            const photo = models[s.data.model.key];
+            return (
+              <li class="xp__card" data-cursor="view" style={`--ratio: ${photo.src.width} / ${photo.src.height}; --reveal-i: ${i}`} data-reveal>
+                <div class="xp__media">
+                  <Picture
+                    src={photo.src}
+                    alt=""
+                    formats={['avif', 'webp']}
+                    fallbackFormat="webp"
+                    widths={[480, 800, 1200, 1600].filter((w) => w <= photo.src.width)}
+                    sizes="(min-width: 64em) 44vw, (min-width: 40em) 46vw, 100vw"
+                    quality={72}
+                    loading="lazy"
+                    decoding="async"
+                    class="xp__img"
+                  />
+                </div>
+                <p class="xp__meta label">
+                  <span class="xp__ref">{s.data.ref}</span>
+                  <span>{s.data.name}</span>
+                </p>
+                <h3 class="xp__need">
+                  <a class="xp__link" href={serviceHref(s.id)}>
+                    {s.data.need}
+                  </a>
+                </h3>
+                <p class="xp__summary">{s.data.summary}</p>
+                <span class="xp__more label" aria-hidden="true">
+                  View mandate <Arrow />
+                </span>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </div>
+
+    <div class="xp__progress" aria-hidden="true">
+      <span class="xp__count label nums" data-gallery-count>01 / 0{services.length}</span>
+      <span class="xp__rail"><span class="xp__bar" data-gallery-bar></span></span>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/gallery';
+</script>
+
+<style>
+  .xp {
+    position: relative;
+    padding-block: var(--section);
+  }
+
+  .xp__track {
+    width: 100%;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: var(--margin);
+  }
+
+  .xp__foot {
+    margin-top: var(--space-6);
+  }
+
+  .xp__list {
+    display: grid;
+    gap: var(--space-8) var(--gutter);
+    margin-top: var(--space-8);
+  }
+
+  .xp__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .xp__media {
+    overflow: hidden;
+    aspect-ratio: var(--ratio);
+    background: var(--mineral);
+  }
+
+  .xp__media :global(picture),
+  .xp__media :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .xp__media :global(img) {
+    transition: transform 900ms var(--ease-out);
+  }
+
+  .xp__meta {
+    display: flex;
+    gap: 1em;
+    margin-top: var(--space-4);
+    color: var(--text-muted);
+  }
+
+  .xp__ref {
+    color: var(--accent);
+  }
+
+  .xp__need {
+    margin-top: var(--space-2);
+    max-width: 18em;
+    font-size: var(--fs-title);
+    font-weight: 330;
+    line-height: 1.08;
+  }
+
+  .xp__link {
+    text-decoration: none;
+  }
+
+  .xp__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .xp__link:focus-visible {
+    outline: none;
+  }
+
+  .xp__card:has(.xp__link:focus-visible) {
+    outline: var(--focus);
+    outline-offset: 6px;
+  }
+
+  .xp__summary {
+    margin-top: var(--space-3);
+    max-width: 30rem;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .xp__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: var(--space-4);
+  }
+
+  @media (hover: hover) {
+    .xp__card:hover .xp__media :global(img) {
+      transform: scale(1.035);
+    }
+
+    .xp__card:hover .xp__more :global(.arrow) {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  .xp__progress {
+    display: none;
+  }
+
+  @media (min-width: 40em) {
+    .xp__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ---------------------------------------------------- pinned gallery */
+  .xp:global(.is-pinned) {
+    padding-block: 0;
+  }
+
+  .xp:global(.is-pinned) .xp__pin {
+    position: sticky;
+    top: var(--header-h);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(100svh - var(--header-h));
+    overflow: hidden;
+  }
+
+  .xp:global(.is-pinned) .xp__track {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(3rem, 5vw, 6rem);
+    width: max-content;
+    max-width: none;
+    margin: 0;
+    will-change: transform;
+    --media-h: min(54svh, 36rem);
+  }
+
+  .xp:global(.is-pinned) .xp__intro {
+    flex: none;
+    align-self: center;
+    width: clamp(20rem, 32vw, 34rem);
+  }
+
+  /* In the pinned panel the head stacks: label, title, text. */
+  .xp:global(.is-pinned) .xp__intro :global(.sh) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .xp:global(.is-pinned) .xp__intro :global(.sh > *) {
+    grid-column: 1;
+  }
+
+  .xp:global(.is-pinned) .xp__intro :global(.sh__label) {
+    padding-top: 0;
+  }
+
+  .xp:global(.is-pinned) .xp__intro :global(.sh__title) {
+    font-size: clamp(2.5rem, 1rem + 3.4vw, 4.75rem);
+  }
+
+  .xp:global(.is-pinned) .xp__intro :global(.sh__intro) {
+    font-size: var(--fs-body);
+  }
+
+  .xp:global(.is-pinned) .xp__list {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(3rem, 5vw, 6rem);
+    margin: 0;
+  }
+
+  .xp:global(.is-pinned) .xp__card {
+    flex: none;
+    width: calc(var(--media-h) * var(--ratio));
+    min-width: 21rem;
+  }
+
+  .xp:global(.is-pinned) .xp__media {
+    height: var(--media-h);
+    width: 100%;
+    aspect-ratio: auto;
+  }
+
+  .xp:global(.is-pinned) .xp__progress {
+    position: absolute;
+    left: var(--margin);
+    right: var(--margin);
+    bottom: var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    color: var(--text-muted);
+  }
+
+  .xp__rail {
+    position: relative;
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .xp__bar {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+</style>

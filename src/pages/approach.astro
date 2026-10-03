@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import Assembly from '../components/approach/Assembly.astro';
+import Principles from '../components/home/Principles.astro';
+import Closing from '../components/ui/Closing.astro';
+import ModelFigure from '../components/media/ModelFigure.astro';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Approach', href: '/approach/' },
+];
+---
+
+<BaseLayout
+  title="Approach — the architecture of a transaction"
+  description="Strategy, valuation, counterparties, terms and execution: the five elements of every transaction BERGWEISS advises on, and the order in which we build them."
+  sheet="03 — Approach"
+  ogImage="/og/approach.png"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Approach" title="The architecture <em>of a transaction.</em>" sheet="03" wide>
+    <p>
+      Every transaction we advise on is built from the same five elements, in the same order. The details change with
+      each client; the discipline does not.
+    </p>
+  </PageHero>
+
+  <section class="laid-out" aria-label="The five members, laid out">
+    <div class="wrap grid">
+      <ModelFigure
+        class="laid-out__plate"
+        model="plan"
+        loading="eager"
+        sizes="(min-width: 64em) 50vw, (min-width: 40em) 75vw, 100vw"
+        caption="Before anything is built, every member is laid out: strategy, valuation, counterparties, terms and execution. The drawing below assembles them in order."
+      />
+    </div>
+  </section>
+
+  <Assembly detailed headingLevel="h1" showLink={false} />
+
+  <Principles number="—" detailed title="What we hold to" />
+
+  <Closing />
+</BaseLayout>
+
+<style>
+  .laid-out {
+    padding-bottom: var(--section-tight);
+  }
+
+  :global(.laid-out__plate) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 40em) {
+    :global(.laid-out__plate) {
+      grid-column: 2 / span 6;
+    }
+  }
+
+  @media (min-width: 64em) {
+    :global(.laid-out__plate) {
+      grid-column: 4 / span 6;
+    }
+  }
+</style>

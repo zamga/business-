@@ -1,0 +1,87 @@
+order: 2
+ref: S-02
+name: Buy-side advisory
+need: Acquiring a business
+needFirstPerson: I want to acquire a business
+headline: 'Acquiring the business *that fits.*'
+intro: >-
+  Growth through acquisition depends on discipline: the right target, a clear
+  view of value and the patience to walk away. We support acquirers and
+  investors from the first search to completion.
+summary: >-
+  Target search, approach, valuation and negotiation for acquirers and
+  investors, from acquisition criteria to completion.
+objective: >-
+  To acquire a business that advances your strategy, at a price that leaves
+  room for the value you intend to create, and to recognise early the
+  opportunities that do not.
+role: >-
+  We act for you as buyer. We identify and approach targets, assess them,
+  shape the offer and lead negotiations, working alongside your due diligence
+  and legal advisers through to completion.
+scope:
+  - Acquisition strategy and target criteria
+  - Market screening, target identification and prioritisation
+  - Discreet approaches to owners, including businesses that are not formally for sale
+  - Valuation, offer strategy and deal structure
+  - Negotiation of price and key terms
+  - Coordination of due diligence and transaction documentation
+  - Support in competitive sale processes run by other advisers
+audiences: [acquirers, investors]
+process:
+  - title: Assessment
+    text: >-
+      We translate your strategy into precise acquisition criteria: what you
+      need, what you can integrate and what it is worth paying for.
+  - title: Preparation
+    text: >-
+      We map the market, build a long list and narrow it to the targets worth
+      approaching, with a view on value for each.
+  - title: Engagement
+    text: >-
+      We approach owners discreetly on your behalf and build the dialogue that
+      makes a transaction possible.
+  - title: Negotiation
+    text: >-
+      We shape and negotiate the offer, balancing price against risk,
+      conditions and what matters most to the owner.
+  - title: Completion
+    text: >-
+      We coordinate due diligence and documentation through signing and
+      closing, and hold the transaction to its timetable.
+questions:
+  - q: Can you approach companies that are not for sale?
+    a: >-
+      Yes. Many good acquisitions begin with a business that was never on the
+      market. A careful, credible first approach is often what makes the
+      conversation possible at all.
+  - q: Do you support us in auctions run by other advisers?
+    a: >-
+      Yes. In a competitive process we help you decide how far to go, present
+      a compelling offer and avoid being carried along by the dynamics of the
+      auction.
+  - q: How do you think about value as a buyer?
+    a: >-
+      We separate three figures: what the business is worth on its own, what
+      it is worth to you, and what it would take to win it. The decision is
+      made once the gaps between them are understood.
+related: [valuation, transaction-structuring, strategic-alternatives]
+drawing: targets
+figure:
+  title: Site plan — the market
+  caption: >-
+    Screen widely, pursue one. Every footprint on the plan is a candidate; one
+    is measured, approached and acquired.
+model:
+  key: field
+  caption: >-
+    Many structures considered, one decided. The target is chosen against your criteria, not found by chance.
+cta:
+  label: Discuss an acquisition
+  topic: buy-side
+seo:
+  title: Buy-side advisory — acquiring a business
+  description: >-
+    BERGWEISS advises acquirers, family offices and private equity investors on
+    acquisitions: target search, discreet approaches, valuation, negotiation
+    and completion.

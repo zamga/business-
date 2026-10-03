@@ -1,0 +1,32 @@
+---
+/**
+ * Marks a fact BERGWEISS has not yet confirmed. Rendered as a visible,
+ * honest gap instead of an invented value.
+ */
+interface Props {
+  what: string;
+}
+const { what } = Astro.props;
+---
+
+<span class="pending"><span class="pending__tag">To be confirmed</span> {what}</span>
+
+<style>
+  .pending {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5em;
+    color: var(--text-muted);
+  }
+
+  .pending__tag {
+    font-size: var(--fs-label);
+    font-weight: 540;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid currentColor;
+    padding: 0.15em 0.5em;
+  }
+</style>

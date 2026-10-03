@@ -1,0 +1,41 @@
+{
+  "name": "bergweiss-site",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "playwright test",
+    "test:lighthouse": "npx --yes @lhci/cli@0.15.1 autorun",
+    "assets:fonts": "python3 scripts/build-fonts.py",
+    "assets:brand": "python3 scripts/build-brand.py",
+    "assets:images": "node scripts/build-images.mjs",
+    "media:render": "node scripts/render/run.mjs",
+    "media:process": "node scripts/render/process-media.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "astro": "^7.3.5",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0",
+    "@types/three": "^0.186.0",
+    "esbuild": "^0.28.2",
+    "js-yaml": "^4.3.2",
+    "playwright": "^1.63.0",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3"
+  },
+  "description": "BERGWEISS — Mergers & Acquisitions Advisory. Corporate website.",
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

@@ -1,0 +1,208 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import Arrow from '../ui/Arrow.astro';
+import { audiences } from '../../data/audiences';
+import { getServices, serviceHref } from '../../lib/content';
+
+interface Props {
+  number?: string;
+}
+
+const { number = '02' } = Astro.props;
+const services = await getServices();
+const nameOf = (id: string) => services.find((s) => s.id === id)?.data.name ?? id;
+---
+
+<section class="clients section" aria-labelledby="clients-title">
+  <div class="wrap">
+    <SectionHead number={number} label="Clients" title="Who we act for" id="clients-title">
+      <p>Every transaction looks different from each side of the table. We begin with yours.</p>
+    </SectionHead>
+
+    <ol class="clients__list" role="list">
+      {
+        audiences.map((a, i) => (
+          <li class="client grid" data-reveal style={`--reveal-i:${i}`}>
+            <span class="client__letter" aria-hidden="true">
+              {a.letter}
+            </span>
+            <h3 class="client__name">
+              <a class="client__link" href={serviceHref(a.primary)}>
+                {a.name}
+              </a>
+            </h3>
+            <p class="client__situation">{a.situation}</p>
+            <div class="client__mandates">
+              <p class="label client__mandates-label">Relevant mandates</p>
+              <ul role="list">
+                {[a.primary, ...a.secondary].map((id) => (
+                  <li>
+                    <a href={serviceHref(id)}>{nameOf(id)}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Arrow class="client__arrow" />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .clients {
+    padding-top: var(--section-tight);
+  }
+
+  .clients__list {
+    margin-top: var(--space-8);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .client {
+    position: relative;
+    row-gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-bottom: 1px solid var(--line);
+    transition: background-color var(--dur-2) var(--ease-out);
+  }
+
+  .client__letter {
+    grid-column: 1 / span 1;
+    font-family: var(--serif);
+    font-size: var(--fs-title);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--text-muted);
+    transition: color var(--dur-2) var(--ease-out);
+  }
+
+  .client__name {
+    grid-column: 2 / -1;
+    font-size: var(--fs-title);
+    font-weight: 340;
+    line-height: 1.1;
+  }
+
+  .client__link {
+    text-decoration: none;
+  }
+
+  /* The whole row is the target for the primary route. */
+  .client__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .client__link:focus-visible {
+    outline: none;
+  }
+
+  .client:has(.client__link:focus-visible) {
+    outline: var(--focus);
+    outline-offset: 2px;
+  }
+
+  .client__situation {
+    grid-column: 2 / -1;
+    color: var(--text-muted);
+    max-width: 34rem;
+  }
+
+  .client__mandates {
+    grid-column: 2 / -1;
+    position: relative;
+    z-index: 1;
+    margin-top: var(--space-2);
+  }
+
+  .client__mandates-label {
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .client__mandates ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    font-size: var(--fs-small);
+  }
+
+  .client__mandates a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+  }
+
+  :global(.client__arrow) {
+    display: none;
+  }
+
+  @media (hover: hover) {
+    .client:hover {
+      background-color: var(--mineral-shade);
+    }
+
+    .client:hover .client__letter {
+      color: var(--accent);
+    }
+
+    .client:hover :global(.client__arrow) {
+      transform: translateX(0.4rem);
+    }
+  }
+
+  @media (min-width: 40em) {
+    .client__name {
+      grid-column: 2 / span 5;
+    }
+
+    .client__situation,
+    .client__mandates {
+      grid-column: 2 / span 6;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .client {
+      align-items: start;
+      padding-block: var(--space-7);
+    }
+
+    .client__name {
+      grid-column: 2 / span 4;
+    }
+
+    .client__situation {
+      grid-column: 6 / span 4;
+      grid-row: 1;
+    }
+
+    .client__mandates {
+      grid-column: 10 / span 2;
+      grid-row: 1;
+      margin-top: 0;
+    }
+
+    .client__mandates ul {
+      display: grid;
+      gap: 0;
+    }
+
+    .client__mandates a {
+      min-height: 1.9rem;
+    }
+
+    :global(.client__arrow) {
+      display: block;
+      grid-column: 12;
+      grid-row: 1;
+      justify-self: end;
+      margin-top: 0.6rem;
+      width: 1.75rem;
+    }
+  }
+</style>

@@ -1,0 +1,14 @@
+# Selected transactions appear (and /transactions/ is generated) only once this
+# list contains entries. Each entry requires `clientConsent: true` and an
+# attribution: `firm` for mandates completed by BERGWEISS, `prior-experience`
+# for work a team member did before joining (link the person via teamMember).
+#
+# - id: example-sale-2026
+#   title: Sale of a family-owned industrial supplier to a strategic acquirer
+#   year: 2026
+#   mandate: sell-side
+#   sector: Industrial components
+#   summary: Exclusive financial adviser to the shareholders on the sale.
+#   attribution: firm
+#   clientConsent: true
+[]

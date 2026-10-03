@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import EnquiryForm from '../components/forms/EnquiryForm.astro';
+import { site } from '../data/site';
+
+const crumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Contact', href: '/contact/' },
+];
+const { email, phone, offices } = site.contact;
+const hasDirect = Boolean(email || phone || offices.length);
+
+const next = [
+  { title: 'We read your enquiry', text: 'In confidence, and only to decide how best to respond.' },
+  { title: 'We contact you', text: 'To arrange a first conversation, by phone or in person.' },
+  { title: 'We give you a view', text: 'On the situation, the options, and whether we are the right adviser.' },
+];
+---
+
+<BaseLayout
+  title="Discuss a transaction"
+  description="Tell BERGWEISS briefly what you are considering. Every enquiry is read in confidence, and a first conversation commits you to nothing."
+  sheet="05 — Contact"
+  ogImage="/og/contact.png"
+  crumbs={crumbs}
+>
+  <PageHero crumbs={crumbs} label="Contact" title="Discuss a <em>transaction.</em>" sheet="05">
+    <p>
+      Tell us briefly what you are considering. Every enquiry is read in confidence, and a first conversation commits
+      you to nothing.
+    </p>
+  </PageHero>
+
+  <section class="contact section--tight" aria-label="Enquiry">
+    <div class="wrap grid contact__grid">
+      <div class="contact__form">
+        <EnquiryForm />
+      </div>
+
+      <aside class="contact__aside" aria-label="What happens next">
+        <div class="aside__block">
+          <h2 class="label aside__title">What happens next</h2>
+          <ol role="list" class="aside__steps">
+            {
+              next.map((step, i) => (
+                <li>
+                  <span class="aside__num nums">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <strong>{step.title}.</strong> {step.text}
+                  </span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+
+        <div class="aside__block">
+          <h2 class="label aside__title">Discretion</h2>
+          <p>
+            Your enquiry is used only to respond to you. Please keep commercially sensitive details for the
+            conversation itself.
+          </p>
+        </div>
+
+        {
+          hasDirect && (
+            <div class="aside__block">
+              <h2 class="label aside__title">Direct</h2>
+              <ul role="list" class="aside__direct">
+                {email && (
+                  <li>
+                    <a href={`mailto:${email}`}>{email}</a>
+                  </li>
+                )}
+                {phone && (
+                  <li>
+                    <a href={`tel:${phone.replace(/\s+/g, '')}`}>{phone}</a>
+                  </li>
+                )}
+                {offices.map((o) => (
+                  <li>
+                    <strong>{o.city}</strong>
+                    <br />
+                    {o.addressLines.join(', ')}, {o.country}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact {
+    padding-top: 0;
+    padding-bottom: var(--section);
+  }
+
+  .contact__grid {
+    row-gap: var(--space-9);
+    padding-top: var(--space-7);
+    background: linear-gradient(var(--line-strong) 0 0) content-box top / 100% 1px no-repeat;
+  }
+
+  .contact__form {
+    grid-column: 1 / -1;
+  }
+
+  .contact__aside {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-7);
+    align-content: start;
+  }
+
+  .aside__title {
+    color: var(--text-muted);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .aside__block p,
+  .aside__steps {
+    font-size: var(--fs-small);
+  }
+
+  .aside__steps {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .aside__steps li {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: var(--space-2);
+  }
+
+  .aside__num {
+    font-size: var(--fs-label);
+    font-weight: 560;
+    padding-top: 0.25em;
+    color: var(--accent);
+  }
+
+  .aside__direct {
+    display: grid;
+    gap: var(--space-3);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 64em) {
+    .contact__form {
+      grid-column: 1 / span 7;
+    }
+
+    .contact__aside {
+      grid-column: 9 / -1;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+      align-self: start;
+    }
+  }
+</style>

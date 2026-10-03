@@ -1,0 +1,91 @@
+---
+/**
+ * The BERGWEISS mark: a braced frame built from five members.
+ * Foundation (strategy), two columns (valuation, counterparties),
+ * beam (terms) and the brace (execution) that makes the structure hold.
+ */
+interface Props {
+  size?: string;
+  label?: string;
+  assemble?: boolean;
+  class?: string;
+}
+
+const { size = '1.5rem', label, assemble = false, class: className } = Astro.props;
+---
+
+<svg
+  class:list={['mark', { 'mark--assemble': assemble }, className]}
+  viewBox="0 0 100 100"
+  width={size}
+  height={size}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <g class="mark__frame">
+    <rect class="mark__m mark__m--beam" x="0" y="0" width="100" height="8"></rect>
+    <rect class="mark__m mark__m--left" x="0" y="12" width="8" height="76"></rect>
+    <rect class="mark__m mark__m--right" x="92" y="12" width="8" height="76"></rect>
+    <rect class="mark__m mark__m--base" x="0" y="92" width="100" height="8"></rect>
+  </g>
+  <g transform="rotate(-45 50 50)">
+    <rect class="mark__m mark__m--brace" x="0.5" y="46" width="99" height="8"></rect>
+  </g>
+</svg>
+
+<style>
+  .mark {
+    flex: none;
+    overflow: visible;
+  }
+
+  .mark__frame {
+    fill: currentColor;
+  }
+
+  .mark__m--brace {
+    fill: var(--accent);
+  }
+
+  /* Load sequence: members travel into place in the order a transaction is built. */
+  @media (prefers-reduced-motion: no-preference) {
+    .mark--assemble .mark__m {
+      animation: mark-in var(--dur-3) var(--ease-draft) both;
+      transform-box: fill-box;
+    }
+
+    .mark--assemble .mark__m--base {
+      --from: 0 40%;
+      animation-delay: 200ms;
+    }
+
+    .mark--assemble .mark__m--left {
+      --from: -140% 0;
+      animation-delay: 340ms;
+    }
+
+    .mark--assemble .mark__m--right {
+      --from: 140% 0;
+      animation-delay: 480ms;
+    }
+
+    .mark--assemble .mark__m--beam {
+      --from: 0 -140%;
+      animation-delay: 620ms;
+    }
+
+    .mark--assemble .mark__m--brace {
+      --from: 40% 0;
+      animation-delay: 800ms;
+    }
+  }
+
+  @keyframes mark-in {
+    from {
+      opacity: 0;
+      translate: var(--from);
+    }
+  }
+</style>

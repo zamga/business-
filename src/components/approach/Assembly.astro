@@ -1,0 +1,641 @@
+---
+/**
+ * SIGNATURE INTERACTION — "The architecture of a transaction"
+ *
+ * Five members of a braced frame start in an exploded view. As each stage of
+ * the approach reaches the reading line, its member travels into the plan:
+ * first along x, then along y, like a drafting arm. When the brace (execution)
+ * locks in, the hatched drawing resolves into solid form: the assembled
+ * structure is the BERGWEISS mark.
+ *
+ * Without JavaScript the structure is shown assembled. With reduced motion,
+ * members never travel: unplaced members wait in position as faint outlines.
+ */
+import { stages } from '../../data/approach';
+import SectionHead from '../ui/SectionHead.astro';
+import Button from '../ui/Button.astro';
+
+interface Props {
+  number?: string;
+  detailed?: boolean;
+  headingLevel?: 'h1' | 'h2';
+  showLink?: boolean;
+}
+
+const { number = '04', detailed = false, headingLevel = 'h2', showLink = true } = Astro.props;
+
+/** Exploded offsets, in percent of the frame's side (container query units). */
+const explode = {
+  base: { x: 8, y: 28 },
+  left: { x: -30, y: 10 },
+  right: { x: 28, y: -8 },
+  beam: { x: -10, y: -30 },
+  brace: { x: 34, y: 8 },
+} as const;
+---
+
+<section class="assembly" aria-labelledby="approach-title" data-assembly>
+  <div class="wrap">
+    {
+      headingLevel === 'h2' ? (
+        <SectionHead number={number} label="Approach" title="The architecture of a transaction" id="approach-title">
+          <p>
+            A transaction is a structure. Five elements carry it, and it holds only when every one is in place.
+            This is the order in which we build it.
+          </p>
+        </SectionHead>
+      ) : (
+        <h2 id="approach-title" class="visually-hidden">
+          The five stages
+        </h2>
+      )
+    }
+
+    <div class="assembly__body grid">
+      <ol class="assembly__stages" role="list">
+        {
+          stages.map((stage, i) => (
+            <li class="stage" data-stage={i}>
+              <div class="stage__inner">
+                <p class="stage__meta label">
+                  <span class="stage__num">{stage.number}</span>
+                  <span>{stage.title}</span>
+                  <span class="stage__member" aria-hidden="true">
+                    — {stage.memberName}
+                  </span>
+                </p>
+                <h3 class="stage__element">{stage.element}</h3>
+                <p class="stage__text">{detailed ? stage.detail : stage.summary}</p>
+                {detailed && (
+                  <dl class="stage__facts">
+                    <div>
+                      <dt class="label">Your decisions</dt>
+                      <dd>{stage.decisions}</dd>
+                    </div>
+                    <div>
+                      <dt class="label">What we prepare</dt>
+                      <dd>
+                        <ul role="list" class="stage__deliverables">
+                          {stage.deliverables.map((d) => (
+                            <li>{d}</li>
+                          ))}
+                        </ul>
+                      </dd>
+                    </div>
+                  </dl>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="assembly__visual">
+        <div class="assembly__sticky">
+          <figure
+            class="assembly__figure"
+            role="img"
+            aria-label="Diagram: strategy, valuation, counterparties, terms and execution assemble into a braced frame, the BERGWEISS mark."
+          >
+            <div class="frame" data-frame data-step="0">
+              <div class="frame__ghost" aria-hidden="true">
+                <span class="ghost ghost--beam"></span>
+                <span class="ghost ghost--left"></span>
+                <span class="ghost ghost--right"></span>
+                <span class="ghost ghost--base"></span>
+                <span class="ghost-brace"><span class="ghost ghost--brace"></span></span>
+              </div>
+
+              {
+                stages.map((stage, i) => (
+                  <div
+                    class:list={['member', `member--${stage.member}`]}
+                    data-member={i}
+                    style={`--ex:${explode[stage.member].x}cqw;--ey:${explode[stage.member].y}cqw`}
+                    aria-hidden="true"
+                  >
+                    <div class="member__y">
+                      <span class="member__body">
+                        <span class="member__solid" />
+                        <span class="member__node member__node--a" />
+                        <span class="member__node member__node--b" />
+                      </span>
+                      <span class="member__tag label">
+                        <span class="member__tag-num">{stage.number}</span> {stage.element}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </figure>
+
+          <div class="assembly__readout" aria-hidden="true">
+            <span class="label readout__step nums" data-readout-step>00 / 05</span>
+            <span class="label readout__name" data-readout-name>Exploded view</span>
+          </div>
+          <p class="assembly__caption" data-caption>
+            Assembled, the five elements form our mark: a structure that holds.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {
+      showLink && (
+        <div class="assembly__more">
+          <Button href="/approach/" variant="outline">
+            The approach in detail
+          </Button>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .assembly {
+    padding-block: var(--section);
+  }
+
+  .assembly__body {
+    margin-top: var(--space-8);
+  }
+
+  /* ------------------------------------------------------------ stages */
+  .assembly__stages {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    counter-reset: stage;
+  }
+
+  .stage {
+    display: flex;
+    align-items: center;
+    min-height: 54svh;
+    border-top: 1px solid var(--line);
+  }
+
+  .stage:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stage__inner {
+    padding-block: var(--space-7);
+    max-width: 34rem;
+  }
+
+  .stage__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75em;
+    color: var(--text-muted);
+  }
+
+  .stage__num {
+    color: var(--accent);
+  }
+
+  .stage__member {
+    display: none;
+  }
+
+  .stage__element {
+    margin-top: var(--space-4);
+    font-size: var(--fs-display-m);
+    transition: color var(--dur-3) var(--ease-out);
+  }
+
+  .stage__text {
+    margin-top: var(--space-4);
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+    color: var(--text-muted);
+    transition: color var(--dur-3) var(--ease-out);
+  }
+
+  :global(.js) .stage:not(.is-active) .stage__element {
+    color: color-mix(in srgb, var(--text) 56%, var(--surface));
+  }
+
+  :global(.js) .stage.is-active .stage__text {
+    color: var(--text);
+  }
+
+  .stage__facts {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+  }
+
+  .stage__facts dt {
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .stage__deliverables {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .stage__deliverables li {
+    padding: 0.3em 0.7em;
+    border: 1px solid var(--line-strong);
+    font-size: var(--fs-small);
+  }
+
+  /* ------------------------------------------------------------ visual */
+  .assembly__visual {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    position: sticky;
+    top: var(--header-h);
+    z-index: 2;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .assembly__sticky {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 40svh;
+  }
+
+  .assembly__figure {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .assembly__readout {
+    position: absolute;
+    top: var(--space-5);
+    left: 0;
+    display: none;
+    gap: var(--space-4);
+    color: var(--text-muted);
+  }
+
+  .readout__step {
+    color: var(--accent);
+  }
+
+  .assembly__caption {
+    display: none;
+  }
+
+  .assembly__more {
+    margin-top: var(--space-8);
+  }
+
+  /* ------------------------------------------------------------ frame */
+  .frame {
+    --t: 8cqw; /* member thickness */
+    --gap: 4cqw; /* joint */
+    position: relative;
+    container-type: inline-size;
+    width: min(19svh, 40vw);
+    aspect-ratio: 1;
+    color: var(--text);
+  }
+
+  .frame__ghost {
+    position: absolute;
+    inset: 0;
+    opacity: 1;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+
+  .ghost {
+    position: absolute;
+    border: 1px dashed var(--line-strong);
+  }
+
+  .ghost--beam,
+  .member--beam {
+    left: 0;
+    top: 0;
+    width: 100cqw;
+    height: var(--t);
+  }
+
+  .ghost--base,
+  .member--base {
+    left: 0;
+    top: calc(100cqw - var(--t));
+    width: 100cqw;
+    height: var(--t);
+  }
+
+  .ghost--left,
+  .member--left {
+    left: 0;
+    top: calc(var(--t) + var(--gap));
+    width: var(--t);
+    height: calc(100cqw - 2 * (var(--t) + var(--gap)));
+  }
+
+  .ghost--right,
+  .member--right {
+    left: calc(100cqw - var(--t));
+    top: calc(var(--t) + var(--gap));
+    width: var(--t);
+    height: calc(100cqw - 2 * (var(--t) + var(--gap)));
+  }
+
+  /* The brace lives in a rotated frame: x runs along it, y across it. */
+  .ghost-brace,
+  .member--brace {
+    left: 0.5cqw;
+    top: 46cqw;
+    width: 99cqw;
+    height: var(--t);
+    rotate: -45deg;
+    transform-origin: 49.5cqw 4cqw;
+  }
+
+  .ghost-brace {
+    position: absolute;
+  }
+
+  .ghost--brace {
+    inset: 0;
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  .member {
+    position: absolute;
+    translate: var(--ex) 0;
+    transition: translate 560ms var(--ease-draft) 380ms;
+  }
+
+  .member__y {
+    position: absolute;
+    inset: 0;
+    translate: 0 var(--ey);
+    transition: translate 560ms var(--ease-draft) 0ms;
+  }
+
+  /* Placing: travel along x first, then y. Leaving: y first, then x. */
+  .member.is-placed {
+    translate: 0 0;
+    transition-delay: 0ms;
+  }
+
+  .member.is-placed .member__y {
+    translate: 0 0;
+    transition-delay: 380ms;
+  }
+
+  .member--brace {
+    translate: none;
+  }
+
+  .member--brace .member__y {
+    translate: var(--ex) var(--ey);
+    transition:
+      translate 760ms var(--ease-draft),
+      opacity var(--dur-2) ease;
+  }
+
+  .member--brace.is-placed .member__y {
+    translate: 0 0;
+    transition-delay: 0ms;
+  }
+
+  .member__body {
+    position: absolute;
+    inset: 0;
+    border: 1px solid currentColor;
+    background: repeating-linear-gradient(-45deg, currentColor 0 1px, transparent 1px 6px);
+    transition:
+      border-color var(--dur-3) ease,
+      opacity var(--dur-3) ease;
+  }
+
+  .member--brace .member__body {
+    color: var(--accent);
+    background: repeating-linear-gradient(0deg, currentColor 0 1px, transparent 1px 5px);
+  }
+
+  .member__solid {
+    position: absolute;
+    inset: -1px;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+
+  .member__node {
+    position: absolute;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    margin-top: -3.5px;
+    background: var(--accent);
+    scale: 0;
+    transition: scale var(--dur-2) var(--ease-out);
+  }
+
+  .member__node--a {
+    left: -3.5px;
+  }
+
+  .member__node--b {
+    right: -3.5px;
+  }
+
+  .member--left .member__node,
+  .member--right .member__node {
+    top: auto;
+    left: 50%;
+    margin: 0 0 0 -3.5px;
+  }
+
+  .member--left .member__node--a,
+  .member--right .member__node--a {
+    top: -3.5px;
+  }
+
+  .member--left .member__node--b,
+  .member--right .member__node--b {
+    bottom: -3.5px;
+  }
+
+  .member.is-placed .member__node {
+    scale: 1;
+    transition-delay: 900ms;
+  }
+
+  .member__tag {
+    position: absolute;
+    display: none;
+    white-space: nowrap;
+    color: var(--text-muted);
+    transition: color var(--dur-3) ease;
+  }
+
+  .member__tag-num {
+    color: var(--accent);
+  }
+
+  .member.is-placed .member__tag {
+    color: var(--text);
+  }
+
+  .member--base .member__tag {
+    left: 0;
+    top: calc(100% + 0.9rem);
+  }
+
+  .member--beam .member__tag {
+    right: 0;
+    bottom: calc(100% + 0.9rem);
+  }
+
+  /* Column labels run along the member, as dimension text does on a drawing. */
+  .member--left .member__tag {
+    right: calc(100% + 0.7rem);
+    top: 50%;
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    translate: 0 -50%;
+  }
+
+  .member--right .member__tag {
+    left: calc(100% + 0.7rem);
+    top: 50%;
+    writing-mode: vertical-rl;
+    translate: 0 -50%;
+  }
+
+  /* The brace label runs along the member, inside the lower triangle. */
+  .member--brace .member__tag {
+    left: 50%;
+    top: calc(100% + 0.6rem);
+    translate: -50% 0;
+  }
+
+  /* Completed: the drawing resolves into the mark. */
+  .frame[data-complete] .member__solid {
+    opacity: 1;
+  }
+
+  .frame[data-complete] .member__node {
+    scale: 0;
+    transition-delay: 0ms;
+  }
+
+  .frame[data-complete] .frame__ghost {
+    opacity: 0;
+  }
+
+  /* Without JavaScript the structure is complete. */
+  html:not(.js) .member,
+  html:not(.js) .member__y {
+    translate: none;
+  }
+
+  html:not(.js) .member__solid {
+    opacity: 1;
+  }
+
+  html:not(.js) .frame__ghost,
+  html:not(.js) .assembly__readout {
+    display: none;
+  }
+
+  /* Reduced motion: no travel. Unplaced members wait in position, faint. */
+  @media (prefers-reduced-motion: reduce) {
+    .member,
+    .member__y,
+    .member--brace .member__y {
+      translate: none !important;
+    }
+
+    :global(.js) .member:not(.is-placed) .member__body {
+      opacity: 0.16;
+    }
+  }
+
+  /* ------------------------------------------------------------ desktop */
+  @media (min-width: 64em) {
+    /* The drawing settles into view before the first stage reaches the reading line. */
+    .assembly__stages {
+      grid-column: 1 / span 5;
+      grid-row: 1;
+      padding-top: 30svh;
+    }
+
+    .stage {
+      min-height: 70svh;
+    }
+
+    .stage__member {
+      display: inline;
+    }
+
+    .assembly__visual {
+      grid-column: 7 / -1;
+      grid-row: 1;
+      align-self: start;
+      top: var(--header-h);
+      background: none;
+      border: 0;
+    }
+
+    .assembly__sticky {
+      height: calc(100svh - var(--header-h));
+    }
+
+    .assembly__readout {
+      display: flex;
+    }
+
+    .frame {
+      width: min(46svh, 25vw, 28rem);
+    }
+
+    .member__tag {
+      display: block;
+    }
+
+    .assembly__caption {
+      display: block;
+      position: absolute;
+      bottom: var(--space-6);
+      left: 0;
+      right: 0;
+      width: min(100%, 22rem);
+      margin-inline: auto;
+      font-family: var(--serif);
+      font-size: 1.375rem;
+      font-style: italic;
+      font-weight: 340;
+      line-height: 1.3;
+      text-align: center;
+      text-wrap: balance;
+      opacity: 0;
+      translate: 0 0.5rem;
+      transition:
+        opacity var(--dur-3) var(--ease-out),
+        translate var(--dur-3) var(--ease-out);
+    }
+
+    .assembly__visual:has(.frame[data-complete]) .assembly__caption,
+    html:not(.js) .assembly__caption {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+</style>
+
+<script>
+  import { initAssembly } from '../../scripts/assembly';
+  document.querySelectorAll<HTMLElement>('[data-assembly]').forEach(initAssembly);
+</script>

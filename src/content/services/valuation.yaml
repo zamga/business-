@@ -1,0 +1,78 @@
+order: 3
+ref: S-03
+name: Valuation
+need: Understanding value
+needFirstPerson: I need to know what a business is worth
+headline: 'Know the value *before you decide.*'
+intro: >-
+  Every transaction decision rests on a view of value. We provide one that is
+  rigorous, explained and usable: not a single number, but a range, the
+  drivers behind it and what would move it.
+summary: >-
+  A reasoned view of what a business is worth, to whom and why, expressed as a
+  range with the drivers that move it.
+objective: >-
+  To understand what a business is worth to you, to the market and to specific
+  buyers or sellers, before committing to a course of action.
+role: >-
+  We analyse the business and its market, apply the methods that fit the
+  decision in question, and explain the result in terms you can act on.
+scope:
+  - Valuation of companies and business units
+  - Value ranges for sale, acquisition and succession decisions
+  - Analysis of what drives value and what erodes it
+  - Buyer-specific perspectives on what different acquirers could pay, and why
+  - Valuation for changes among shareholders and in family ownership
+  - Review of offers and of the value of alternative deal structures
+audiences: [owners, families, acquirers, investors]
+process:
+  - title: Purpose
+    text: >-
+      We agree what the valuation is for, because the right method depends on
+      the decision it has to inform.
+  - title: Analysis
+    text: >-
+      We examine the financials, normalise earnings and assess the business
+      model, the market and the risks.
+  - title: Market view
+    text: >-
+      We test our view against how buyers, investors and comparable
+      transactions value similar businesses.
+  - title: Range
+    text: >-
+      We set out a value range and its drivers, including what would move it
+      up or down.
+  - title: Decision
+    text: >-
+      We help you use the result: whether to proceed, when, and on what terms.
+questions:
+  - q: Why a range rather than a single figure?
+    a: >-
+      Because the price a business achieves depends on who buys it, when and
+      on what terms. A range with its drivers is a better basis for a decision
+      than false precision.
+  - q: Is this the price we would achieve in a sale?
+    a: >-
+      A valuation is a reasoned estimate, not a guarantee. The price is set in
+      negotiation, and a well-run process is designed to test the top of the
+      range.
+related: [sell-side, strategic-alternatives, buy-side]
+drawing: range
+figure:
+  title: Elevation — the range
+  caption: >-
+    Value is measured, not asserted. The dimension marks the range; the
+    redline marks the figure a decision can rely on.
+model:
+  key: range
+  caption: >-
+    One structure, measured at five scales. A value is a defensible range, and a reasoned position within it.
+cta:
+  label: Discuss a valuation
+  topic: valuation
+seo:
+  title: Valuation — understanding what a business is worth
+  description: >-
+    BERGWEISS provides valuation advice for sale, acquisition and succession
+    decisions: a reasoned value range, its drivers and what different buyers
+    could pay.

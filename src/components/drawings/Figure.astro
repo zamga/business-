@@ -1,0 +1,104 @@
+---
+import Drawing from './Drawing.astro';
+import type { drawingKeys } from '../../content.config';
+
+interface Props {
+  kind: (typeof drawingKeys)[number];
+  uid: string;
+  reference: string;
+  title: string;
+  caption?: string;
+  class?: string;
+}
+
+const { kind, uid, reference, title, caption, class: className } = Astro.props;
+---
+
+<figure class:list={['fig', className]}>
+  <div class="fig__frame">
+    <span class="fig__reg fig__reg--tl" aria-hidden="true"></span>
+    <span class="fig__reg fig__reg--tr" aria-hidden="true"></span>
+    <span class="fig__reg fig__reg--bl" aria-hidden="true"></span>
+    <span class="fig__reg fig__reg--br" aria-hidden="true"></span>
+    <div class="fig__head label" aria-hidden="true">
+      <span class="fig__ref">Fig. {reference}</span>
+      <span>{title}</span>
+    </div>
+    <div class="fig__art">
+      <Drawing kind={kind} uid={uid} />
+    </div>
+  </div>
+  {caption && <figcaption class="fig__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .fig {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .fig__frame {
+    position: relative;
+    border: 1px solid var(--line-strong);
+  }
+
+  .fig__reg {
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    border-color: var(--text);
+    border-style: solid;
+    border-width: 0;
+  }
+
+  .fig__reg--tl {
+    top: -6px;
+    left: -6px;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  .fig__reg--tr {
+    top: -6px;
+    right: -6px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+  }
+
+  .fig__reg--bl {
+    bottom: -6px;
+    left: -6px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+  }
+
+  .fig__reg--br {
+    bottom: -6px;
+    right: -6px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
+  }
+
+  .fig__head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-muted);
+  }
+
+  .fig__ref {
+    color: var(--accent);
+  }
+
+  .fig__art {
+    padding: clamp(0.75rem, 3%, 1.5rem);
+  }
+
+  .fig__caption {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: 34rem;
+  }
+</style>

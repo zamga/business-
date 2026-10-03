@@ -1,0 +1,204 @@
+---
+/**
+ * The model film: the five members assemble in the order a transaction is
+ * built, then hold while the light moves. Plays once when scrolled into view
+ * (never with reduced motion), always with a visible pause control. The
+ * stages underneath light up as each member locks, timed to the film.
+ */
+import { getImage } from 'astro:assets';
+import SectionHead from '../ui/SectionHead.astro';
+import { stages } from '../../data/approach';
+import { lockProgress } from '../../three/structure';
+import poster from '../../assets/models/assembly-wide-end.webp';
+
+interface Props {
+  number?: string;
+}
+
+const { number = '05' } = Astro.props;
+/** The film is 200 frames at 25 fps; the assembly takes its first 60 per cent. */
+const FILM_SECONDS = 199 / 25;
+const ASSEMBLY_SHARE = 0.6;
+const lockAt = stages.map((_, i) => (lockProgress(i) * ASSEMBLY_SHARE * FILM_SECONDS).toFixed(2));
+const posterImage = await getImage({ src: poster, width: 1600, format: 'webp', quality: 76 });
+---
+
+<section class="film section" aria-labelledby="film-title">
+  <div class="wrap">
+    <SectionHead number={number} label="The model" title="From drawing <em>to structure.</em>" id="film-title">
+      <p>
+        The five elements, built at model scale and filmed under a moving sun. Every image on this site is rendered from
+        this one model of our mark.
+      </p>
+    </SectionHead>
+
+    <figure class="film__figure" data-film data-reveal="plate">
+      <div class="film__frame plate__frame">
+        <video
+          class="film__video"
+          muted
+          playsinline
+          preload="none"
+          poster={posterImage.src}
+          width="1600"
+          height="900"
+          disablepictureinpicture
+          data-film-video
+        >
+          <source src="/media/assembly-wide.webm" type="video/webm" />
+          <source src="/media/assembly-wide.mp4" type="video/mp4" />
+        </video>
+        <button class="film__toggle" type="button" data-film-toggle data-cursor="play" aria-label="Play the model film">
+          <span class="film__icon" aria-hidden="true"></span>
+          <span class="film__state label" data-film-state>Play</span>
+        </button>
+      </div>
+      <figcaption class="film__caption">
+        <ol class="film__stages" role="list">
+          {
+            stages.map((stage, i) => (
+              <li class="film__stage" data-film-stage data-at={lockAt[i]}>
+                <span class="film__num nums">{stage.number}</span>
+                <span class="film__element">{stage.element}</span>
+                <span class="film__member">{stage.memberName}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="film__note">
+          Model film, eight seconds, without sound. The members lock into place in the order above; the brace,
+          execution, goes in last.
+        </p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  import '../../scripts/film';
+</script>
+
+<style>
+  .film__figure {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+  }
+
+  /* Phones crop the film to a portrait frame around the model. */
+  .film__frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    margin-inline: calc(-1 * var(--margin));
+    background: var(--mineral);
+  }
+
+  @media (min-width: 40em) {
+    .film__frame {
+      aspect-ratio: 16 / 9;
+      margin-inline: 0;
+    }
+  }
+
+  .film__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .film__toggle {
+    position: absolute;
+    left: var(--space-4);
+    bottom: var(--space-4);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 2.75rem;
+    padding: 0 1rem 0 0.85rem;
+    background: var(--ink);
+    color: var(--mineral);
+    transition: background-color var(--dur-2) var(--ease-out);
+  }
+
+  .film__toggle:hover {
+    background: var(--redline);
+  }
+
+  /* Play: a triangle. Pause: two bars. Replay: a ring. */
+  .film__icon {
+    width: 0.7rem;
+    height: 0.8rem;
+    background: currentColor;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .film__figure:global([data-state='playing']) .film__icon {
+    clip-path: polygon(0 0, 35% 0, 35% 100%, 0 100%, 0 0, 65% 0, 100% 0, 100% 100%, 65% 100%, 65% 0);
+  }
+
+  .film__figure:global([data-state='ended']) .film__icon {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: transparent;
+    border: 1.5px solid currentColor;
+    border-top-color: transparent;
+    clip-path: none;
+  }
+
+  .film__stages {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4) var(--gutter);
+    border-top: 1px solid var(--line-strong);
+    padding-top: var(--space-4);
+  }
+
+  .film__stage {
+    display: grid;
+    gap: 0.15rem;
+    color: var(--text-muted);
+    transition: color var(--dur-3) var(--ease-out);
+  }
+
+  .film__num {
+    font-size: var(--fs-label);
+    font-weight: 540;
+    letter-spacing: var(--tracking-label);
+    color: inherit;
+    transition: color var(--dur-3) var(--ease-out);
+  }
+
+  .film__element {
+    font-family: var(--serif);
+    font-size: var(--fs-title);
+    font-weight: 330;
+    line-height: 1.1;
+  }
+
+  .film__member {
+    font-size: var(--fs-small);
+  }
+
+  .film__stage:global(.is-locked) {
+    color: var(--text);
+  }
+
+  .film__stage:global(.is-locked) .film__num {
+    color: var(--accent);
+  }
+
+  .film__note {
+    max-width: 36rem;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 64em) {
+    .film__stages {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+</style>

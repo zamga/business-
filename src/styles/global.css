@@ -1,0 +1,632 @@
+/*
+ * BERGWEISS — design system
+ * The architecture of a transaction: a drawing set in ink on mineral white,
+ * with one redline for the decisive element.
+ */
+
+@layer reset, tokens, base, layout, utilities;
+
+/* ------------------------------------------------------------------ reset */
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+
+  ol[role='list'],
+  ul[role='list'] {
+    list-style: none;
+    padding: 0;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  li,
+  dd,
+  figcaption,
+  blockquote {
+    overflow-wrap: break-word;
+  }
+}
+
+/* ----------------------------------------------------------------- tokens */
+@layer tokens {
+  :root {
+    color-scheme: light;
+
+    /* Colour — ink, mineral white and a single redline. */
+    --ink: #0e1216;
+    --ink-raised: #171c22;
+    --mineral: #f1ede5;
+    --mineral-shade: #e7e2d8;
+    --stone: #565b60; /* 5.9:1 on mineral */
+    --ash: #a3a7aa; /* 7.8:1 on ink */
+    --redline: #b23a22; /* 5.1:1 on mineral */
+    --glow: #ef6a4b; /* 6.1:1 on ink */
+    --rule: rgb(14 18 22 / 0.16);
+    --rule-strong: rgb(14 18 22 / 0.42);
+    --rule-on-ink: rgb(241 237 229 / 0.16);
+    --rule-on-ink-strong: rgb(241 237 229 / 0.42);
+    --control: #85898d; /* 3:1 non-text contrast on mineral */
+
+    /* Surface roles, re-pointed by .on-ink sections. */
+    --surface: var(--mineral);
+    --text: var(--ink);
+    --text-muted: var(--stone);
+    --accent: var(--redline);
+    --line: var(--rule);
+    --line-strong: var(--rule-strong);
+
+    /* Type */
+    --serif: var(--font-newsreader), 'Newsreader', Georgia, serif;
+    --sans: var(--font-amp), var(--font-archivo), 'Archivo', Arial, sans-serif;
+
+    --fs-hero: min(21vw, 5.5rem);
+    --fs-display-l: clamp(2.6rem, 1.2rem + 4.6vw, 6.5rem);
+    --fs-display-m: clamp(2rem, 1.2rem + 2.6vw, 4rem);
+    --fs-statement: clamp(1.75rem, 1.15rem + 1.95vw, 3.125rem);
+    --fs-title: clamp(1.625rem, 1.3rem + 1vw, 2.25rem);
+    --fs-lead: clamp(1.1875rem, 1rem + 0.6vw, 1.5rem);
+    --fs-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+    --fs-small: 0.9375rem;
+    --fs-label: 0.75rem;
+    --fs-micro: 0.6875rem;
+
+    --tracking-label: 0.12em;
+    --tracking-display: -0.022em;
+
+    /* Space */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+    --space-9: 6rem;
+    --space-10: 8rem;
+    --section: clamp(4.5rem, 2.25rem + 6.5vw, 9.5rem);
+    --section-tight: clamp(3rem, 1.75rem + 4vw, 6rem);
+
+    /* Grid */
+    --cols: 4;
+    --margin: clamp(1.25rem, 0.5rem + 3.2vw, 4.5rem);
+    --gutter: clamp(1rem, 0.6rem + 1.2vw, 2rem);
+    --max: 110rem;
+    --header-h: 4rem;
+
+    /* Motion — measured, never bouncy. */
+    --ease-draft: cubic-bezier(0.65, 0, 0.15, 1);
+    --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+    --ease-in: cubic-bezier(0.55, 0, 0.9, 0.3);
+    --dur-1: 160ms;
+    --dur-2: 320ms;
+    --dur-3: 640ms;
+    --dur-4: 960ms;
+    --dur-5: 1400ms;
+
+    --focus: 2px solid var(--accent);
+
+    /* How long page-load choreography waits for the first-visit intro. */
+    --intro-delay: 0ms;
+  }
+
+  html.is-intro {
+    --intro-delay: 1150ms;
+  }
+
+  @media (min-width: 40em) {
+    :root {
+      --cols: 8;
+      --fs-hero: clamp(4rem, 10.1vw, 12rem);
+    }
+  }
+
+  @media (min-width: 64em) {
+    :root {
+      --cols: 12;
+      --header-h: 4.5rem;
+    }
+  }
+
+  .on-ink {
+    --surface: var(--ink);
+    --text: var(--mineral);
+    --text-muted: var(--ash);
+    --accent: var(--glow);
+    --line: var(--rule-on-ink);
+    --line-strong: var(--rule-on-ink-strong);
+    --control: #7d8287;
+    background-color: var(--surface);
+    color: var(--text);
+  }
+}
+
+/* ------------------------------------------------------------------- base */
+@layer base {
+  html {
+    background-color: var(--mineral);
+    color: var(--ink);
+    scroll-padding-top: calc(var(--header-h) + var(--space-5));
+    hanging-punctuation: first last;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html:focus-within {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    min-height: 100svh;
+    background-color: var(--mineral);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--fs-body);
+    font-weight: 400;
+    line-height: 1.6;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--serif);
+    font-weight: 330;
+    line-height: 1.02;
+    letter-spacing: var(--tracking-display);
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: var(--line-strong);
+    transition: text-decoration-color var(--dur-1) ease;
+  }
+
+  a:hover {
+    text-decoration-color: var(--accent);
+  }
+
+  :focus-visible {
+    outline: var(--focus);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--mineral);
+  }
+
+  .on-ink ::selection {
+    background: var(--mineral);
+    color: var(--ink);
+  }
+
+  em,
+  i {
+    font-style: italic;
+  }
+
+  strong {
+    font-weight: 560;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+/* ----------------------------------------------------------------- layout */
+@layer layout {
+  .wrap {
+    width: 100%;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: var(--margin);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+
+  .section {
+    padding-block: var(--section);
+  }
+
+  .section--tight {
+    padding-block: var(--section-tight);
+  }
+}
+
+/* -------------------------------------------------------------- utilities */
+@layer utilities {
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .label {
+    font-family: var(--sans);
+    font-size: var(--fs-label);
+    font-weight: 540;
+    line-height: 1.3;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  .lead {
+    font-size: var(--fs-lead);
+    line-height: 1.42;
+    letter-spacing: -0.006em;
+    max-width: 36em;
+  }
+
+  .measure {
+    max-width: 38em;
+  }
+
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .italic {
+    font-style: italic;
+  }
+
+  /* Scroll reveals are enabled only when JavaScript is running, so content
+     is never hidden from visitors without it. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+    transition:
+      opacity var(--dur-3) var(--ease-out),
+      transform var(--dur-3) var(--ease-out);
+    transition-delay: calc(var(--reveal-i, 0) * 70ms);
+  }
+
+  .js [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js [data-reveal='line'] {
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-4) var(--ease-draft);
+  }
+
+  .js [data-reveal='line'].is-revealed {
+    transform: scaleX(1);
+  }
+
+  /* Plates of model photography open along the brace: a diagonal wipe from
+     the top-left corner, the same motion as the page transition. */
+  .js [data-reveal='plate'] {
+    transform: none;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+
+  .js [data-reveal='plate'] .plate__frame {
+    clip-path: polygon(400% -400%, -400% 400%, -400% -400%);
+    transition: clip-path 1200ms var(--ease-draft);
+  }
+
+  .js [data-reveal='plate'] .plate__frame img {
+    transform: scale(1.08);
+    transition: transform 1800ms var(--ease-out);
+  }
+
+  .js [data-reveal='plate'].is-revealed .plate__frame {
+    clip-path: polygon(600% -400%, -400% 600%, -400% -400%);
+  }
+
+  .js [data-reveal='plate'].is-revealed .plate__frame img {
+    transform: none;
+  }
+
+  /* Drafting cursor (src/scripts/cursor.ts). The system cursor is hidden
+     only while it runs, and text fields keep their caret. */
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+
+  html.has-cursor
+    :is(
+      input:not([type='radio'], [type='checkbox'], [type='submit'], [type='button']),
+      textarea,
+      select,
+      [contenteditable='true']
+    ) {
+    cursor: auto !important;
+  }
+
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 400;
+    width: 0;
+    height: 0;
+    color: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-2) var(--ease-out);
+  }
+
+  .cursor.is-visible {
+    opacity: 1;
+  }
+
+  .cursor[data-mode='text'] {
+    opacity: 0;
+  }
+
+  .cursor__cross,
+  .cursor__sun,
+  .cursor__ring > *,
+  .cursor__label {
+    position: absolute;
+  }
+
+  /* A registration mark: two hairlines with a gap where they cross. */
+  .cursor__cross {
+    top: -11px;
+    left: -11px;
+    width: 22px;
+    height: 22px;
+    background:
+      linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat,
+      linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat;
+    mask: radial-gradient(circle, transparent 0 3px, #000 3.5px);
+    transition:
+      transform var(--dur-2) var(--ease-out),
+      opacity var(--dur-1) ease;
+  }
+
+  .cursor__ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .cursor__ring::before {
+    content: '';
+    position: absolute;
+    top: -22px;
+    left: -22px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.3);
+    transition:
+      transform var(--dur-2) var(--ease-out),
+      opacity var(--dur-2) var(--ease-out),
+      background-color var(--dur-2) var(--ease-out);
+  }
+
+  .cursor[data-mode='link'] .cursor__ring::before {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor[data-mode='link'] .cursor__cross {
+    transform: rotate(45deg) scale(0.55);
+  }
+
+  .cursor[data-mode='view'] .cursor__ring::before,
+  .cursor[data-mode='play'] .cursor__ring::before {
+    opacity: 1;
+    background-color: currentColor;
+    transform: scale(1.9);
+  }
+
+  .cursor[data-mode='view'] .cursor__cross,
+  .cursor[data-mode='play'] .cursor__cross,
+  .cursor[data-mode='sun'] .cursor__cross {
+    opacity: 0;
+  }
+
+  .cursor__label {
+    top: 0;
+    left: 0;
+    color: #000;
+    font-size: var(--fs-micro);
+    font-weight: 560;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Over the live model the pointer is the sun. */
+  .cursor__sun {
+    top: -15px;
+    left: -15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, currentColor 0 5px, transparent 5.5px),
+      repeating-conic-gradient(from -2deg, currentColor 0 4deg, transparent 4deg 45deg);
+    mask: radial-gradient(circle, #000 0 5.5px, transparent 6px 9px, #000 9.5px 15px, transparent 15.5px);
+    opacity: 0;
+    transform: scale(0.4) rotate(-30deg);
+    transition:
+      transform var(--dur-3) var(--ease-out),
+      opacity var(--dur-2) var(--ease-out);
+  }
+
+  .cursor[data-mode='sun'] .cursor__sun {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor.is-down .cursor__cross,
+  .cursor.is-down .cursor__sun {
+    scale: 0.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .js [data-reveal],
+    .js [data-reveal='line'] {
+      opacity: 1;
+      transform: none;
+    }
+
+    .js [data-reveal='plate'] .plate__frame,
+    .js [data-reveal='plate'] .plate__frame img {
+      clip-path: none;
+      transform: none;
+    }
+  }
+}
+
+/* -------------------------------------------------- cross-document motion */
+/* Page changes: a redline brace sweeps across the screen, carrying the new
+   sheet in behind it. The header stays put. Browsers without cross-document
+   view transitions simply navigate. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root) {
+  background-color: var(--redline);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation-duration: 680ms;
+  animation-timing-function: var(--ease-draft);
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation-name: brace-old;
+}
+
+::view-transition-new(root) {
+  animation-name: brace-new;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+}
+
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* The wipe edge is the line x + y = k (in percent of the viewport); huge
+   triangles keep three vertices so the polygons interpolate cleanly. */
+@keyframes brace-new {
+  from {
+    clip-path: polygon(392% -400%, -400% 392%, -400% -400%);
+  }
+  to {
+    clip-path: polygon(600% -400%, -400% 600%, -400% -400%);
+  }
+}
+
+@keyframes brace-old {
+  from {
+    clip-path: polygon(400% -400%, -400% 400%, 500% 500%);
+  }
+  to {
+    clip-path: polygon(608% -400%, -400% 608%, 500% 500%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

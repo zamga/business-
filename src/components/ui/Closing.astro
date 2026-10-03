@@ -1,0 +1,182 @@
+---
+import { Picture } from 'astro:assets';
+import Button from './Button.astro';
+import Arrow from './Arrow.astro';
+import { models } from '../../data/models';
+
+interface Props {
+  title?: string;
+  text?: string;
+  topic?: string;
+  cta?: string;
+}
+
+const {
+  title = 'Discuss a <em>transaction.</em>',
+  text = 'Tell us briefly what you are considering. Every enquiry is read in confidence, and a first conversation commits you to nothing.',
+  topic,
+  cta = 'Start the conversation',
+} = Astro.props;
+const href = topic ? `/contact/?topic=${encodeURIComponent(topic)}` : '/contact/';
+---
+
+<section class="closing on-ink" aria-labelledby="closing-title">
+  <!-- The structure after hours: the same model, lit from one side on ink. -->
+  <div class="closing__art" aria-hidden="true">
+    <Picture
+      src={models.night.src}
+      alt=""
+      formats={['avif', 'webp']}
+      fallbackFormat="webp"
+      widths={[800, 1200, 1600, 2400]}
+      sizes="(min-width: 64em) 72vw, 100vw"
+      quality={70}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div class="wrap grid closing__grid">
+    <p class="closing__label label"><span class="closing__dot" aria-hidden="true"></span>Begin</p>
+    <h2 id="closing-title" class="closing__title" data-reveal>
+      <a href={href} class="closing__title-link" tabindex="-1"><Fragment set:html={title} /></a>
+    </h2>
+    <div class="closing__body" data-reveal style="--reveal-i: 1">
+      <p class="lead">{text}</p>
+      <Button href={href}>{cta}</Button>
+      <ul role="list" class="closing__routes">
+        <li>
+          <a href="/contact/?topic=sell-side">Selling a business <Arrow /></a>
+        </li>
+        <li>
+          <a href="/contact/?topic=buy-side">Acquiring a business <Arrow /></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-bottom: var(--section);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .closing__art {
+    position: relative;
+    z-index: -1;
+    aspect-ratio: 16 / 9;
+    margin-bottom: var(--space-6);
+  }
+
+  .closing__art :global(picture),
+  .closing__art :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 72% 50%;
+  }
+
+  .closing__grid {
+    row-gap: var(--space-6);
+    align-items: end;
+  }
+
+  .closing__label {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    color: var(--text-muted);
+  }
+
+  .closing__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+  }
+
+  .closing__title {
+    grid-column: 1 / -1;
+    font-size: clamp(3rem, 1rem + 8vw, 9.5rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+
+  .closing__title-link {
+    text-decoration: none;
+  }
+
+  .closing__title-link:hover :global(em) {
+    color: var(--accent);
+  }
+
+  .closing__title :global(em) {
+    transition: color var(--dur-2) var(--ease-out);
+  }
+
+  .closing__body {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .closing__body .lead {
+    color: var(--text-muted);
+  }
+
+  .closing__routes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    font-size: var(--fs-small);
+  }
+
+  .closing__routes a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: color var(--dur-2) var(--ease-out);
+  }
+
+  .closing__routes a:hover {
+    color: var(--text);
+  }
+
+  @media (min-width: 64em) {
+    .closing {
+      padding-top: var(--section);
+    }
+
+    /* The render's ground is the ink itself, so the picture has no edge. */
+    .closing__art {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 70%;
+      margin: 0;
+      aspect-ratio: auto;
+      mask-image: linear-gradient(to right, transparent, #000 30%);
+    }
+
+    .closing__art :global(img) {
+      object-position: 100% 50%;
+    }
+
+    .closing__title {
+      grid-column: 1 / span 8;
+      font-size: clamp(3rem, 1rem + 6.2vw, 8rem);
+    }
+
+    .closing__body {
+      grid-column: 1 / span 6;
+    }
+  }
+</style>

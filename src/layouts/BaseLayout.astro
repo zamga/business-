@@ -1,0 +1,166 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Intro from '../components/layout/Intro.astro';
+import Footer from '../components/layout/Footer.astro';
+import { site } from '../data/site';
+import { absolute, organizationJsonLd, breadcrumbJsonLd, type Crumb } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Short sheet name shown in the footer title block. */
+  sheet: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  crumbs?: Crumb[];
+  jsonLd?: Record<string, unknown>[];
+  assembleMark?: boolean;
+  published?: Date;
+}
+
+const {
+  title,
+  description,
+  sheet,
+  ogImage = '/og/default.png',
+  ogType = 'website',
+  noindex = false,
+  crumbs,
+  jsonLd = [],
+  assembleMark = false,
+  published,
+} = Astro.props;
+
+const base = Astro.site;
+const isHome = Astro.url.pathname === '/';
+/** Builds without a configured SITE_URL are previews: keep them out of search indexes. */
+const isPreview = !base || base.hostname.endsWith('.example');
+const fullTitle = isHome ? `${site.name} — ${site.descriptor}` : `${title} — ${site.name}`;
+const canonical = absolute(Astro.url.pathname, base);
+const ogImageUrl = absolute(ogImage, base);
+
+const structured = [
+  organizationJsonLd(base),
+  ...(isHome
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: site.name,
+          url: absolute('/', base),
+          publisher: { '@id': absolute('/#organization', base) },
+        },
+      ]
+    : []),
+  ...(crumbs && crumbs.length > 1 ? [breadcrumbJsonLd(crumbs, base)] : []),
+  ...jsonLd,
+];
+
+const speculation = {
+  prerender: [
+    {
+      where: { and: [{ href_matches: '/*' }, { not: { selector_matches: '[data-no-prerender]' } }] },
+      eagerness: 'moderate',
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en-GB" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {(noindex || isPreview) && <meta name="robots" content="noindex, follow" />}
+
+    <script is:inline>
+      (function (root) {
+        root.classList.add('js');
+        // The intro plays on the first page of a visit only, and never with reduced motion.
+        try {
+          if (!sessionStorage.getItem('bw:intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            root.classList.add('is-intro');
+            sessionStorage.setItem('bw:intro', '1');
+          }
+        } catch (error) {
+          /* Storage unavailable: skip the intro. */
+        }
+      })(document.documentElement);
+    </script>
+
+    <Font cssVariable="--font-newsreader" preload />
+    <Font cssVariable="--font-archivo" preload />
+    <Font cssVariable="--font-amp" preload />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#f1ede5" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${sheet}`} />
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(structured)} />
+    <script type="speculationrules" set:html={JSON.stringify(speculation)} />
+  </head>
+  <body id="top">
+    <Intro />
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header assembleMark={assembleMark} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer sheet={sheet} />
+
+    <script>
+      import '../scripts/reveal';
+      import '../scripts/cursor';
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: var(--space-3);
+    left: var(--space-3);
+    z-index: 100;
+    padding: var(--space-3) var(--space-4);
+    background: var(--ink);
+    color: var(--mineral);
+    font-size: var(--fs-small);
+    font-weight: 540;
+    text-decoration: none;
+    transform: translateY(-200%);
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

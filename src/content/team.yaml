@@ -1,0 +1,15 @@
+# Team members appear on /firm/ once this list contains confirmed entries.
+# Publish only with each person's consent. Describe experience gained before
+# joining BERGWEISS in `priorExperience`, never as transactions of the firm.
+#
+# - id: first-last
+#   name: First Last
+#   role: Partner
+#   order: 1
+#   bio: >-
+#     Two or three sentences on the person's focus and how they work with clients.
+#   focus: [Sell-side advisory, Family businesses]
+#   languages: [English, German]
+#   priorExperience: >-
+#     Before BERGWEISS, ten years in the M&A team of ...
+[]

@@ -1,0 +1,243 @@
+---
+/**
+ * First-visit intro, once per session. The five members assemble into the
+ * mark while the stages of a transaction count through; then the screen
+ * splits open along the brace's own diagonal.
+ *
+ * Shown only when an inline script in <head> sets html.is-intro (never with
+ * reduced motion or without JavaScript). The sequence is pure CSS, so it
+ * finishes and gets out of the way even if no further script runs; the
+ * script only adds skipping and announces the end.
+ */
+const stages = ['Strategy', 'Valuation', 'Counterparties', 'Terms', 'Execution'];
+---
+
+<div class="intro" data-intro aria-hidden="true">
+  {
+    (['a', 'b'] as const).map((side) => (
+      <div class:list={['intro__half', `intro__half--${side}`]}>
+        <div class="intro__center">
+          <svg class="intro__mark" viewBox="0 0 100 100" focusable="false">
+            <rect class="intro__m intro__m--base" x="0" y="92" width="100" height="8" />
+            <rect class="intro__m intro__m--left" x="0" y="12" width="8" height="76" />
+            <rect class="intro__m intro__m--right" x="92" y="12" width="8" height="76" />
+            <rect class="intro__m intro__m--beam" x="0" y="0" width="100" height="8" />
+            <g transform="rotate(-45 50 50)">
+              <rect class="intro__m intro__m--brace" x="0.5" y="46" width="99" height="8" />
+            </g>
+          </svg>
+          <p class="intro__stages label">
+            {
+              stages.map((name, i) => (
+                <span class="intro__stage" style={`--i:${i}`}>
+                  <span class="intro__num">0{i + 1}</span> {name}
+                </span>
+              ))
+            }
+          </p>
+        </div>
+      </div>
+    ))
+  }
+  <span class="intro__cut"></span>
+</div>
+
+<script>
+  import '../../scripts/intro';
+</script>
+
+<style>
+  .intro {
+    display: none;
+  }
+
+  :global(html.is-intro) .intro {
+    --t-member: 130ms;
+    --t-split: 1150ms;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: block;
+    overflow: hidden;
+    pointer-events: auto;
+    animation: intro-off 1ms linear calc(var(--t-split) + 800ms) forwards;
+  }
+
+  :global(html.is-intro) .intro.is-skipping {
+    --t-split: 0ms;
+  }
+
+  .intro__half {
+    position: absolute;
+    inset: 0;
+    background: var(--mineral);
+    animation: 760ms var(--ease-draft) var(--t-split) both;
+  }
+
+  /* The split runs through the centre at 45 degrees, exactly along the mark's brace. */
+  .intro__half--a {
+    clip-path: polygon(0 0, calc(50% + 50vh) 0, calc(50% - 50vh) 100%, 0 100%);
+    animation-name: intro-split-a;
+  }
+
+  .intro__half--b {
+    clip-path: polygon(calc(50% + 50vh) 0, 100% 0, 100% 100%, calc(50% - 50vh) 100%);
+    animation-name: intro-split-b;
+  }
+
+  .intro__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(34vmin, 15rem);
+    translate: -50% -50%;
+  }
+
+  .intro__mark {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .intro__m {
+    fill: var(--ink);
+    transform-box: fill-box;
+    animation: intro-member 460ms var(--ease-draft) both;
+  }
+
+  .intro__m--base {
+    --from: 0 60%;
+    animation-delay: 0ms;
+  }
+
+  .intro__m--left {
+    --from: -160% 0;
+    animation-delay: calc(var(--t-member) * 1);
+  }
+
+  .intro__m--right {
+    --from: 160% 0;
+    animation-delay: calc(var(--t-member) * 2);
+  }
+
+  .intro__m--beam {
+    --from: 0 -160%;
+    animation-delay: calc(var(--t-member) * 3);
+  }
+
+  .intro__m--brace {
+    --from: 60% 0;
+    fill: var(--redline);
+    animation-delay: calc(var(--t-member) * 4 + 100ms);
+  }
+
+  /* The stages count through in the space below the mark. */
+  .intro__stages {
+    position: absolute;
+    top: calc(100% + 1.75rem);
+    left: 0;
+    right: 0;
+    height: 1.2em;
+    color: var(--ink);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .intro__stage {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation:
+      intro-stage-in 220ms var(--ease-out) calc(var(--i) * var(--t-member)) both,
+      intro-stage-out 160ms var(--ease-in) calc((var(--i) + 1) * var(--t-member)) forwards;
+  }
+
+  .intro__stage:last-child {
+    color: var(--redline);
+    animation: intro-stage-in 220ms var(--ease-out) calc(4 * var(--t-member) + 100ms) both;
+  }
+
+  .intro__num {
+    margin-right: 0.6em;
+    color: var(--stone);
+  }
+
+  /* As the halves part, the brace's line runs the full diagonal of the screen. */
+  .intro__cut {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160vmax;
+    height: 2px;
+    margin: -1px 0 0 -80vmax;
+    background: var(--redline);
+    rotate: -45deg;
+    scale: 0 1;
+    animation: intro-cut 900ms var(--ease-draft) calc(var(--t-split) - 160ms) both;
+  }
+
+  @keyframes intro-member {
+    from {
+      opacity: 0;
+      translate: var(--from);
+    }
+  }
+
+  @keyframes intro-stage-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.5em, 0);
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes intro-stage-out {
+    to {
+      opacity: 0;
+      transform: translate3d(0, -0.5em, 0);
+    }
+  }
+
+  @keyframes intro-split-a {
+    to {
+      transform: translate3d(-75vmax, -75vmax, 0);
+    }
+  }
+
+  @keyframes intro-split-b {
+    to {
+      transform: translate3d(75vmax, 75vmax, 0);
+    }
+  }
+
+  @keyframes intro-cut {
+    0% {
+      scale: 0 1;
+      opacity: 1;
+    }
+    40% {
+      scale: 1 1;
+      opacity: 1;
+    }
+    100% {
+      scale: 1 1;
+      opacity: 0;
+    }
+  }
+
+  @keyframes intro-off {
+    to {
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.is-intro) .intro {
+      display: none;
+    }
+  }
+</style>
