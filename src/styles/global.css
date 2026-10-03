@@ -142,6 +142,13 @@
     --dur-5: 1400ms;
 
     --focus: 2px solid var(--accent);
+
+    /* How long page-load choreography waits for the first-visit intro. */
+    --intro-delay: 0ms;
+  }
+
+  html.is-intro {
+    --intro-delay: 1150ms;
   }
 
   @media (min-width: 40em) {
@@ -361,6 +368,177 @@
     transform: scaleX(1);
   }
 
+  /* Plates of model photography open along the brace: a diagonal wipe from
+     the top-left corner, the same motion as the page transition. */
+  .js [data-reveal='plate'] {
+    transform: none;
+    transition: opacity var(--dur-3) var(--ease-out);
+  }
+
+  .js [data-reveal='plate'] .plate__frame {
+    clip-path: polygon(400% -400%, -400% 400%, -400% -400%);
+    transition: clip-path 1200ms var(--ease-draft);
+  }
+
+  .js [data-reveal='plate'] .plate__frame img {
+    transform: scale(1.08);
+    transition: transform 1800ms var(--ease-out);
+  }
+
+  .js [data-reveal='plate'].is-revealed .plate__frame {
+    clip-path: polygon(600% -400%, -400% 600%, -400% -400%);
+  }
+
+  .js [data-reveal='plate'].is-revealed .plate__frame img {
+    transform: none;
+  }
+
+  /* Drafting cursor (src/scripts/cursor.ts). The system cursor is hidden
+     only while it runs, and text fields keep their caret. */
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: none !important;
+  }
+
+  html.has-cursor
+    :is(
+      input:not([type='radio'], [type='checkbox'], [type='submit'], [type='button']),
+      textarea,
+      select,
+      [contenteditable='true']
+    ) {
+    cursor: auto !important;
+  }
+
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 400;
+    width: 0;
+    height: 0;
+    color: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-2) var(--ease-out);
+  }
+
+  .cursor.is-visible {
+    opacity: 1;
+  }
+
+  .cursor[data-mode='text'] {
+    opacity: 0;
+  }
+
+  .cursor__cross,
+  .cursor__sun,
+  .cursor__ring > *,
+  .cursor__label {
+    position: absolute;
+  }
+
+  /* A registration mark: two hairlines with a gap where they cross. */
+  .cursor__cross {
+    top: -11px;
+    left: -11px;
+    width: 22px;
+    height: 22px;
+    background:
+      linear-gradient(currentColor, currentColor) center / 1px 100% no-repeat,
+      linear-gradient(currentColor, currentColor) center / 100% 1px no-repeat;
+    mask: radial-gradient(circle, transparent 0 3px, #000 3.5px);
+    transition:
+      transform var(--dur-2) var(--ease-out),
+      opacity var(--dur-1) ease;
+  }
+
+  .cursor__ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .cursor__ring::before {
+    content: '';
+    position: absolute;
+    top: -22px;
+    left: -22px;
+    width: 44px;
+    height: 44px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0.3);
+    transition:
+      transform var(--dur-2) var(--ease-out),
+      opacity var(--dur-2) var(--ease-out),
+      background-color var(--dur-2) var(--ease-out);
+  }
+
+  .cursor[data-mode='link'] .cursor__ring::before {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor[data-mode='link'] .cursor__cross {
+    transform: rotate(45deg) scale(0.55);
+  }
+
+  .cursor[data-mode='view'] .cursor__ring::before,
+  .cursor[data-mode='play'] .cursor__ring::before {
+    opacity: 1;
+    background-color: currentColor;
+    transform: scale(1.9);
+  }
+
+  .cursor[data-mode='view'] .cursor__cross,
+  .cursor[data-mode='play'] .cursor__cross,
+  .cursor[data-mode='sun'] .cursor__cross {
+    opacity: 0;
+  }
+
+  .cursor__label {
+    top: 0;
+    left: 0;
+    color: #000;
+    font-size: var(--fs-micro);
+    font-weight: 560;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Over the live model the pointer is the sun. */
+  .cursor__sun {
+    top: -15px;
+    left: -15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, currentColor 0 5px, transparent 5.5px),
+      repeating-conic-gradient(from -2deg, currentColor 0 4deg, transparent 4deg 45deg);
+    mask: radial-gradient(circle, #000 0 5.5px, transparent 6px 9px, #000 9.5px 15px, transparent 15.5px);
+    opacity: 0;
+    transform: scale(0.4) rotate(-30deg);
+    transition:
+      transform var(--dur-3) var(--ease-out),
+      opacity var(--dur-2) var(--ease-out);
+  }
+
+  .cursor[data-mode='sun'] .cursor__sun {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor.is-down .cursor__cross,
+  .cursor.is-down .cursor__sun {
+    scale: 0.8;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -378,20 +556,41 @@
       opacity: 1;
       transform: none;
     }
+
+    .js [data-reveal='plate'] .plate__frame,
+    .js [data-reveal='plate'] .plate__frame img {
+      clip-path: none;
+      transform: none;
+    }
   }
 }
 
 /* -------------------------------------------------- cross-document motion */
+/* Page changes: a redline brace sweeps across the screen, carrying the new
+   sheet in behind it. The header stays put. Browsers without cross-document
+   view transitions simply navigate. */
 @view-transition {
   navigation: auto;
 }
 
+::view-transition-group(root) {
+  background-color: var(--redline);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation-duration: 680ms;
+  animation-timing-function: var(--ease-draft);
+  animation-fill-mode: both;
+}
+
 ::view-transition-old(root) {
-  animation: vt-out 220ms var(--ease-in) both;
+  animation-name: brace-old;
 }
 
 ::view-transition-new(root) {
-  animation: vt-in 420ms var(--ease-out) 60ms both;
+  animation-name: brace-new;
 }
 
 ::view-transition-group(site-header) {
@@ -404,17 +603,23 @@
   mix-blend-mode: normal;
 }
 
-@keyframes vt-out {
+/* The wipe edge is the line x + y = k (in percent of the viewport); huge
+   triangles keep three vertices so the polygons interpolate cleanly. */
+@keyframes brace-new {
+  from {
+    clip-path: polygon(392% -400%, -400% 392%, -400% -400%);
+  }
   to {
-    opacity: 0;
-    transform: translate3d(0, -0.5rem, 0);
+    clip-path: polygon(600% -400%, -400% 600%, -400% -400%);
   }
 }
 
-@keyframes vt-in {
+@keyframes brace-old {
   from {
-    opacity: 0;
-    transform: translate3d(0, 1rem, 0);
+    clip-path: polygon(400% -400%, -400% 400%, 500% 500%);
+  }
+  to {
+    clip-path: polygon(608% -400%, -400% 608%, 500% 500%);
   }
 }
 

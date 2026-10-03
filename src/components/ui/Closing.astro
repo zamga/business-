@@ -1,7 +1,8 @@
 ---
-import DrawnMark from '../brand/DrawnMark.astro';
+import { Picture } from 'astro:assets';
 import Button from './Button.astro';
 import Arrow from './Arrow.astro';
+import { models } from '../../data/models';
 
 interface Props {
   title?: string;
@@ -20,6 +21,20 @@ const href = topic ? `/contact/?topic=${encodeURIComponent(topic)}` : '/contact/
 ---
 
 <section class="closing on-ink" aria-labelledby="closing-title">
+  <!-- The structure after hours: the same model, lit from one side on ink. -->
+  <div class="closing__art" aria-hidden="true">
+    <Picture
+      src={models.night.src}
+      alt=""
+      formats={['avif', 'webp']}
+      fallbackFormat="webp"
+      widths={[800, 1200, 1600, 2400]}
+      sizes="(min-width: 64em) 72vw, 100vw"
+      quality={70}
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
   <div class="wrap grid closing__grid">
     <p class="closing__label label"><span class="closing__dot" aria-hidden="true"></span>Begin</p>
     <h2 id="closing-title" class="closing__title" data-reveal>
@@ -37,16 +52,32 @@ const href = topic ? `/contact/?topic=${encodeURIComponent(topic)}` : '/contact/
         </li>
       </ul>
     </div>
-    <div class="closing__mark" aria-hidden="true">
-      <DrawnMark uid={`closing-${topic ?? 'default'}`} size="100%" />
-    </div>
   </div>
 </section>
 
 <style>
   .closing {
-    padding-block: var(--section);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-bottom: var(--section);
     border-bottom: 1px solid var(--line);
+  }
+
+  .closing__art {
+    position: relative;
+    z-index: -1;
+    aspect-ratio: 16 / 9;
+    margin-bottom: var(--space-6);
+  }
+
+  .closing__art :global(picture),
+  .closing__art :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 72% 50%;
   }
 
   .closing__grid {
@@ -120,27 +151,32 @@ const href = topic ? `/contact/?topic=${encodeURIComponent(topic)}` : '/contact/
     color: var(--text);
   }
 
-  .closing__mark {
-    display: none;
-  }
-
   @media (min-width: 64em) {
+    .closing {
+      padding-top: var(--section);
+    }
+
+    /* The render's ground is the ink itself, so the picture has no edge. */
+    .closing__art {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 70%;
+      margin: 0;
+      aspect-ratio: auto;
+      mask-image: linear-gradient(to right, transparent, #000 30%);
+    }
+
+    .closing__art :global(img) {
+      object-position: 100% 50%;
+    }
+
     .closing__title {
-      grid-column: 1 / span 10;
+      grid-column: 1 / span 8;
+      font-size: clamp(3rem, 1rem + 6.2vw, 8rem);
     }
 
     .closing__body {
       grid-column: 1 / span 6;
-    }
-
-    .closing__mark {
-      display: block;
-      grid-column: 10 / span 3;
-      grid-row: 3;
-      align-self: end;
-      width: 100%;
-      max-width: 15rem;
-      justify-self: end;
     }
   }
 </style>

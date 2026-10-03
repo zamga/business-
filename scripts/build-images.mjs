@@ -17,6 +17,10 @@ for (const f of ['newsreader-display.woff2', 'newsreader-display-italic.woff2', 
 }
 const fontUrl = (f) => fontData[f];
 const markSvg = await readFile(path.join(pub, 'brand/bergweiss-mark.svg'), 'utf8');
+// Model photography (src/assets/models), inlined for the same reason as the fonts.
+const modelData = {};
+const model = async (key) =>
+  (modelData[key] ??= `data:image/webp;base64,${(await readFile(path.join(root, 'src/assets/models', `${key}.webp`))).toString('base64')}`);
 const lockupSvg = await readFile(path.join(pub, 'brand/bergweiss-lockup.svg'), 'utf8');
 const faviconSvg = await readFile(path.join(pub, 'favicon.svg'), 'utf8');
 
@@ -29,7 +33,7 @@ const fonts = `
 @font-face{font-family:A;src:url(${fontUrl('archivo.woff2')}) format('woff2');font-weight:380 620}
 @font-face{font-family:Amp;src:url(${fontUrl('ampersand.woff2')}) format('woff2');unicode-range:U+26}`;
 
-const og = ({ label, headline, sheet }) => `<!doctype html><html><head><meta charset="utf-8"><style>
+const og = ({ label, headline, sheet, modelUri, full }) => `<!doctype html><html><head><meta charset="utf-8"><style>
 ${fonts}
 *{margin:0;box-sizing:border-box}
 html,body{width:1200px;height:630px;background:#f1ede5;color:#0e1216}
@@ -38,11 +42,15 @@ html,body{width:1200px;height:630px;background:#f1ede5;color:#0e1216}
 .r{position:absolute;width:14px;height:14px;border:0 solid #0e1216}
 .lab{position:absolute;left:80px;top:84px;font:540 15px/1 Amp,A;letter-spacing:.12em;text-transform:uppercase;color:#b23a22}
 h1{position:absolute;left:78px;right:80px;top:132px;font:300 92px/0.96 N;letter-spacing:-.025em;text-wrap:balance}
+.m{position:absolute;top:41px;right:41px;width:520px;height:452px;object-fit:cover}
+.m--full{left:41px;width:1118px;height:548px;object-position:right center}
+.with-model h1{right:600px;font-size:68px}
+.with-model.full h1{right:430px}
 h1 em{font-style:italic}
 .lock{position:absolute;left:80px;bottom:84px;height:40px}
 .lock svg{height:40px;width:auto}
 .sheet{position:absolute;right:80px;bottom:84px;font:540 14px/1.4 Amp,A;letter-spacing:.12em;text-transform:uppercase;color:#565b60;text-align:right}
-</style></head><body>
+</style></head><body class="${modelUri ? `with-model${full ? ' full' : ''}` : ''}">
 <div class="s">
   <span class="ax" style="left:0"></span><span class="ax" style="left:25%"></span><span class="ax" style="left:50%"></span><span class="ax" style="left:75%"></span>
   <span class="r" style="left:-8px;top:-8px;border-top-width:1px;border-left-width:1px"></span>
@@ -50,6 +58,7 @@ h1 em{font-style:italic}
   <span class="r" style="left:-8px;bottom:-8px;border-bottom-width:1px;border-left-width:1px"></span>
   <span class="r" style="right:-8px;bottom:-8px;border-bottom-width:1px;border-right-width:1px"></span>
 </div>
+${modelUri ? `<img class="m${full ? ' m--full' : ''}" src="${modelUri}" alt="">` : ''}
 <p class="lab">${esc(label)}</p>
 <h1>${emph(headline)}</h1>
 <div class="lock">${lockupSvg}</div>
@@ -57,10 +66,10 @@ h1 em{font-style:italic}
 </body></html>`;
 
 const pages = [
-  { file: 'default', label: 'Mergers & Acquisitions Advisory', headline: 'Strategic decisions. *Precisely executed.*', sheet: 'Sheet 01 — Index' },
-  { file: 'approach', label: 'Approach', headline: 'The architecture *of a transaction.*', sheet: 'Sheet 03 — Approach' },
-  { file: 'firm', label: 'The firm', headline: 'An adviser at the table, *on your side of it.*', sheet: 'Sheet 04 — The firm' },
-  { file: 'contact', label: 'Contact', headline: 'Discuss a *transaction.*', sheet: 'Sheet 05 — Contact' },
+  { file: 'default', label: 'Mergers & Acquisitions Advisory', headline: 'Strategic decisions. *Precisely executed.*', sheet: 'Sheet 01 — Index', model: 'hero-wide', full: true },
+  { file: 'approach', label: 'Approach', headline: 'The architecture *of a transaction.*', sheet: 'Sheet 03 — Approach', model: 'plan' },
+  { file: 'firm', label: 'The firm', headline: 'An adviser at the table, *on your side of it.*', sheet: 'Sheet 04 — The firm', model: 'front' },
+  { file: 'contact', label: 'Contact', headline: 'Discuss a *transaction.*', sheet: 'Sheet 05 — Contact', model: 'hero-wide', full: true },
 ];
 
 const serviceDir = path.join(root, 'src/content/services');
@@ -71,6 +80,7 @@ for (const f of (await readdir(serviceDir)).filter((n) => n.endsWith('.yaml'))) 
     label: `${d.ref} · ${d.name}`,
     headline: d.headline,
     sheet: `Sheet 02.${d.order} — ${d.name}`,
+    model: d.model.key,
   });
 }
 
@@ -80,7 +90,7 @@ const page = await browser.newPage({ deviceScaleFactor: 1 });
 await mkdir(path.join(pub, 'og'), { recursive: true });
 for (const p of pages) {
   await page.setViewportSize({ width: 1200, height: 630 });
-  await page.setContent(og(p), { waitUntil: 'load' });
+  await page.setContent(og({ ...p, modelUri: p.model ? await model(p.model) : undefined }), { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: path.join(pub, 'og', `${p.file}.png`) });
   console.log(`og/${p.file}.png`);

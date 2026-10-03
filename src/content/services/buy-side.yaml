@@ -72,6 +72,10 @@ figure:
   caption: >-
     Screen widely, pursue one. Every footprint on the plan is a candidate; one
     is measured, approached and acquired.
+model:
+  key: field
+  caption: >-
+    Many structures considered, one decided. The target is chosen against your criteria, not found by chance.
 cta:
   label: Discuss an acquisition
   topic: buy-side

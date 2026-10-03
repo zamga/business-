@@ -1,5 +1,7 @@
 ---
 import Button from '../ui/Button.astro';
+import ModelFigure from '../media/ModelFigure.astro';
+import TitleBlock from './TitleBlock.astro';
 ---
 
 <section class="position section--tight" aria-labelledby="position-title">
@@ -11,12 +13,23 @@ import Button from '../ui/Button.astro';
       Selling a company, acquiring one or bringing in new owners changes who owns what, usually for good. BERGWEISS
       advises business owners, acquirers and investors on these decisions, <em>and carries them through to completion.</em>
     </p>
-    <div class="position__aside" data-reveal style="--reveal-i: 2">
+    <ModelFigure
+      class="position__plate"
+      model="joint"
+      ratio="4 / 5"
+      focus="40% 50%"
+      sizes="(min-width: 64em) 34vw, 100vw"
+      caption="The brace, pinned into its corner. Execution is the member that makes a structure rigid."
+    />
+    <div class="position__aside" data-reveal style="--reveal-i: 1">
       <p class="position__note">
         Our role is advisory. We act for the client who appoints us; the capital in the transaction, and the decision to
         commit it, remain theirs.
       </p>
       <Button href="/firm/" variant="text">About the firm</Button>
+    </div>
+    <div class="position__block" data-reveal style="--reveal-i: 2">
+      <TitleBlock />
     </div>
   </div>
 </section>
@@ -60,6 +73,11 @@ import Button from '../ui/Button.astro';
     font-weight: 300;
   }
 
+  :global(.position__plate) {
+    grid-column: 1 / -1;
+    margin-top: var(--space-5);
+  }
+
   .position__aside {
     grid-column: 1 / -1;
     display: grid;
@@ -72,6 +90,30 @@ import Button from '../ui/Button.astro';
     color: var(--text-muted);
   }
 
+  .position__block {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 40em) {
+    :global(.position__plate) {
+      grid-column: 1 / span 4;
+      grid-row: span 2;
+    }
+
+    .position__aside,
+    .position__block {
+      grid-column: 5 / -1;
+    }
+
+    .position__aside {
+      margin-top: var(--space-5);
+    }
+
+    .position__block {
+      align-self: end;
+    }
+  }
+
   @media (min-width: 64em) {
     .position__label {
       grid-column: 1 / span 3;
@@ -82,9 +124,18 @@ import Button from '../ui/Button.astro';
       grid-column: 4 / -1;
     }
 
+    :global(.position__plate) {
+      grid-column: 1 / span 5;
+      margin-top: var(--space-7);
+    }
+
+    .position__aside,
+    .position__block {
+      grid-column: 7 / -1;
+    }
+
     .position__aside {
-      grid-column: 4 / span 5;
-      margin-top: var(--space-4);
+      margin-top: var(--space-7);
     }
   }
 </style>

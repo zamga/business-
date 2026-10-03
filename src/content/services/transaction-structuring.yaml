@@ -66,6 +66,10 @@ figure:
     Consideration drawn in section: what is paid at completion, what is
     deferred, what depends on performance, and the governance that ties the
     layers together.
+model:
+  key: layers
+  caption: >-
+    Each layer tied by its own brace: price, payment, ownership and risk, structured so the whole holds.
 cta:
   label: Discuss a structure
   topic: transaction-structuring

@@ -1,21 +1,30 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const stageTops = (page: Page) =>
-  page.$$eval('[data-stage]', (els) => els.map((el) => el.getBoundingClientRect().top + window.scrollY));
+const stageCount = (page: Page) => page.locator('[data-stage]').count();
 
-const scrollToStage = async (page: Page, top: number, line: number) => {
+/**
+ * Measured at the moment of scrolling: sections above the assembly (the
+ * pinned gallery) settle their height once fonts and images are in.
+ */
+const scrollToStage = async (page: Page, index: number, line: number) => {
   const vh = page.viewportSize()!.height;
-  await page.evaluate((y) => window.scrollTo(0, y), top - vh * line + 40);
+  await page.evaluate(
+    ([i, offset]) => {
+      const stage = document.querySelectorAll('[data-stage]')[i]!;
+      window.scrollTo(0, stage.getBoundingClientRect().top + window.scrollY - offset);
+    },
+    [index, vh * line - 40] as const,
+  );
 };
 
 test('members are placed stage by stage and the mark completes', async ({ page, isMobile }) => {
   const line = isMobile ? 0.7 : 0.5;
   await page.goto('/');
-  const tops = await stageTops(page);
+  const count = await stageCount(page);
   const frame = page.locator('[data-frame]');
 
-  for (let i = 0; i < tops.length; i++) {
-    await scrollToStage(page, tops[i]!, line);
+  for (let i = 0; i < count; i++) {
+    await scrollToStage(page, i, line);
     await expect(frame).toHaveAttribute('data-step', String(i + 1));
     await expect(page.locator('[data-member].is-placed')).toHaveCount(i + 1);
   }
@@ -25,8 +34,7 @@ test('members are placed stage by stage and the mark completes', async ({ page, 
 test('jumping away and back resets the assembly', async ({ page, isMobile }) => {
   const line = isMobile ? 0.7 : 0.5;
   await page.goto('/');
-  const tops = await stageTops(page);
-  await scrollToStage(page, tops.at(-1)!, line);
+  await scrollToStage(page, (await stageCount(page)) - 1, line);
   await expect(page.locator('[data-frame]')).toHaveAttribute('data-step', '5');
 
   await page.evaluate(() => window.scrollTo(0, 0));

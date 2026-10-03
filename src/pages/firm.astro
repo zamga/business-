@@ -5,6 +5,7 @@ import SectionHead from '../components/ui/SectionHead.astro';
 import Principles from '../components/home/Principles.astro';
 import Closing from '../components/ui/Closing.astro';
 import Contours from '../components/drawings/Contours.astro';
+import ModelFigure from '../components/media/ModelFigure.astro';
 import { getServices, getTeam, serviceHref } from '../lib/content';
 import { audiences } from '../data/audiences';
 
@@ -84,6 +85,25 @@ const engagement = [
           </p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="elevation section--tight" aria-labelledby="elevation-title">
+    <div class="wrap grid elevation__grid">
+      <div class="elevation__text" data-reveal>
+        <p class="label elevation__label">The mark</p>
+        <h2 id="elevation-title" class="elevation__title">A structure <em>that holds.</em></h2>
+        <p class="elevation__body">
+          Seen straight on, the model is our mark: a foundation, two columns, a beam, and the brace that makes the
+          frame rigid. Strategy, valuation, counterparties, terms and execution, in that order.
+        </p>
+      </div>
+      <ModelFigure
+        class="elevation__plate"
+        model="front"
+        sizes="(min-width: 64em) 45vw, (min-width: 40em) 60vw, 100vw"
+        caption="Elevation: the five members, assembled."
+      />
     </div>
   </section>
 
@@ -310,6 +330,53 @@ const engagement = [
   @media (min-width: 64em) {
     .team__list {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* ------------------------------------------------------------ elevation */
+  .elevation__grid {
+    row-gap: var(--space-7);
+    align-items: end;
+  }
+
+  .elevation__text {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .elevation__label {
+    color: var(--accent);
+  }
+
+  .elevation__title {
+    font-size: var(--fs-display-m);
+    font-weight: 300;
+  }
+
+  .elevation__body {
+    max-width: 30rem;
+    color: var(--text-muted);
+  }
+
+  :global(.elevation__plate) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 40em) {
+    :global(.elevation__plate) {
+      grid-column: 3 / -1;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .elevation__text {
+      grid-column: 1 / span 5;
+      padding-bottom: var(--space-8);
+    }
+
+    :global(.elevation__plate) {
+      grid-column: 7 / -1;
     }
   }
 </style>

@@ -64,6 +64,10 @@ figure:
   caption: >-
     One site, several possible structures. Each option is drawn to the same
     scale, so the choice is made on equal terms.
+model:
+  key: options
+  caption: >-
+    Three possible structures on one site. The decision comes from comparing real options side by side.
 cta:
   label: Discuss your options
   topic: strategic-alternatives

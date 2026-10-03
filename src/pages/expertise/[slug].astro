@@ -10,6 +10,8 @@ import StepMark from '../../components/brand/StepMark.astro';
 import Button from '../../components/ui/Button.astro';
 import Arrow from '../../components/ui/Arrow.astro';
 import Closing from '../../components/ui/Closing.astro';
+import ModelFigure from '../../components/media/ModelFigure.astro';
+import { models } from '../../data/models';
 import { getServices, serviceHref, type Service } from '../../lib/content';
 import { serviceJsonLd } from '../../lib/seo';
 import { emphasis } from '../../lib/text';
@@ -35,6 +37,8 @@ const crumbs = [
   { name: d.name, href },
 ];
 const contactHref = `/contact/?topic=${encodeURIComponent(d.cta.topic)}`;
+const photo = models[d.model.key].src;
+const wideModel = photo.width / photo.height >= 1.4;
 const sheet = `02.${d.order}`;
 ---
 
@@ -50,6 +54,19 @@ const sheet = `02.${d.order}`;
     <p>{d.intro}</p>
     <Button href={contactHref}>{d.cta.label}</Button>
   </PageHero>
+
+  <!-- The mandate as a model: the same idea as the drawing below, built. -->
+  <section class:list={['model', { 'model--wide': wideModel }]} aria-label={`${d.name}: model study`}>
+    <div class="wrap grid model__grid">
+      <ModelFigure
+        class="model__plate"
+        model={d.model.key}
+        caption={d.model.caption}
+        loading="eager"
+        sizes={wideModel ? '(min-width: 64em) 75vw, 100vw' : '(min-width: 64em) 50vw, (min-width: 40em) 75vw, 100vw'}
+      />
+    </div>
+  </section>
 
   <!-- Objective and role, set against the mandate's drawing -->
   <section class="brief section--tight" aria-label={`${d.name}: objective and role`}>
@@ -188,6 +205,31 @@ const sheet = `02.${d.order}`;
 </BaseLayout>
 
 <style>
+  /* ------------------------------------------------------------ model */
+  .model {
+    padding-bottom: var(--section-tight);
+  }
+
+  :global(.model__plate) {
+    grid-column: 1 / -1;
+  }
+
+  @media (min-width: 40em) {
+    .model:not(.model--wide) :global(.model__plate) {
+      grid-column: 2 / span 6;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .model--wide :global(.model__plate) {
+      grid-column: 4 / -1;
+    }
+
+    .model:not(.model--wide) :global(.model__plate) {
+      grid-column: 4 / span 6;
+    }
+  }
+
   /* ------------------------------------------------------------ brief */
   .brief__grid {
     row-gap: var(--space-8);

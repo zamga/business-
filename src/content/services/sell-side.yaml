@@ -78,6 +78,10 @@ figure:
   caption: >-
     One seller, a deliberately chosen field of buyers. Parties approached but
     not invited further are drawn as dashed outlines.
+model:
+  key: plan
+  caption: >-
+    Every member laid out before anything is built. A sale is prepared in full before the first buyer is approached.
 cta:
   label: Discuss a sale
   topic: sell-side

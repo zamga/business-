@@ -4,6 +4,8 @@ import { z } from 'astro/zod';
 
 export const audienceKeys = ['owners', 'families', 'acquirers', 'investors'] as const;
 export const drawingKeys = ['table', 'targets', 'range', 'options', 'section'] as const;
+/** Model photographs a mandate can use (see src/data/models.ts). */
+export const serviceModelKeys = ['plan', 'field', 'range', 'options', 'layers'] as const;
 
 /**
  * Mandates. One YAML file per service in `src/content/services/`.
@@ -32,6 +34,7 @@ const services = defineCollection({
     related: z.array(reference('services')).max(3),
     drawing: z.enum(drawingKeys),
     figure: z.object({ title: z.string(), caption: z.string() }),
+    model: z.object({ key: z.enum(serviceModelKeys), caption: z.string().max(180) }),
     cta: z.object({ label: z.string(), topic: z.string() }),
     seo: z.object({
       title: z.string().max(70),

@@ -63,6 +63,10 @@ figure:
   caption: >-
     Value is measured, not asserted. The dimension marks the range; the
     redline marks the figure a decision can rely on.
+model:
+  key: range
+  caption: >-
+    One structure, measured at five scales. A value is a defensible range, and a reasoned position within it.
 cta:
   label: Discuss a valuation
   topic: valuation

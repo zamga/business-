@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import DrawnMark from '../components/brand/DrawnMark.astro';
+import { Picture } from 'astro:assets';
+import { models } from '../data/models';
 import Arrow from '../components/ui/Arrow.astro';
 
 const routes = [
@@ -19,15 +20,26 @@ const routes = [
 >
   <section class="nf">
     <div class="wrap grid nf__grid">
-      <div class="nf__mark" aria-hidden="true">
-        <DrawnMark uid="404" size="100%" omit={['brace']} />
-      </div>
+      <figure class="nf__model">
+        <Picture
+          src={models.racked.src}
+          alt={models.racked.alt}
+          formats={['avif', 'webp']}
+          fallbackFormat="webp"
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 64em) 50vw, 100vw"
+          quality={72}
+          loading="eager"
+          class="nf__img"
+        />
+        <figcaption class="label nf__ref"><span>{models.racked.ref}</span> {models.racked.title}</figcaption>
+      </figure>
       <div class="nf__body">
         <p class="label nf__label">Error 404 · Sheet not found</p>
         <h1 class="nf__title">This sheet is <em>not in the set.</em></h1>
         <p class="nf__text">
-          Without its brace, a frame cannot hold. The page may have moved, or the address may be mistyped; these will
-          take you back to solid ground.
+          Without its brace, a frame racks out of square and cannot hold. The page may have moved, or the address may
+          be mistyped; these will take you back to solid ground.
         </p>
         <ul role="list" class="nf__routes">
           {
@@ -56,10 +68,27 @@ const routes = [
     align-items: center;
   }
 
-  .nf__mark {
-    grid-column: 1 / span 2;
+  .nf__model {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--space-3);
+    margin: 0 calc(-1 * var(--margin));
+  }
+
+  .nf__model :global(img) {
+    display: block;
     width: 100%;
-    max-width: 12rem;
+    height: auto;
+  }
+
+  .nf__ref {
+    padding-inline: var(--margin);
+    color: var(--text-muted);
+  }
+
+  .nf__ref span {
+    margin-right: 0.8em;
+    color: var(--accent);
   }
 
   .nf__body {
@@ -109,13 +138,13 @@ const routes = [
   }
 
   @media (min-width: 64em) {
-    .nf__mark {
-      grid-column: 1 / span 4;
-      max-width: 22rem;
+    .nf__model {
+      grid-column: 1 / span 7;
+      margin: 0 0 0 calc(-1 * var(--margin));
     }
 
     .nf__body {
-      grid-column: 6 / -1;
+      grid-column: 8 / -1;
     }
   }
 </style>

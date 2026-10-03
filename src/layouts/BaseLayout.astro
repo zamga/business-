@@ -2,6 +2,7 @@
 import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/layout/Header.astro';
+import Intro from '../components/layout/Intro.astro';
 import Footer from '../components/layout/Footer.astro';
 import { site } from '../data/site';
 import { absolute, organizationJsonLd, breadcrumbJsonLd, type Crumb } from '../lib/seo';
@@ -79,7 +80,18 @@ const speculation = {
     {(noindex || isPreview) && <meta name="robots" content="noindex, follow" />}
 
     <script is:inline>
-      document.documentElement.classList.add('js');
+      (function (root) {
+        root.classList.add('js');
+        // The intro plays on the first page of a visit only, and never with reduced motion.
+        try {
+          if (!sessionStorage.getItem('bw:intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            root.classList.add('is-intro');
+            sessionStorage.setItem('bw:intro', '1');
+          }
+        } catch (error) {
+          /* Storage unavailable: skip the intro. */
+        }
+      })(document.documentElement);
     </script>
 
     <Font cssVariable="--font-newsreader" preload />
@@ -113,6 +125,7 @@ const speculation = {
     <script type="speculationrules" set:html={JSON.stringify(speculation)} />
   </head>
   <body id="top">
+    <Intro />
     <a class="skip-link" href="#main">Skip to content</a>
     <Header assembleMark={assembleMark} />
     <main id="main" tabindex="-1">
@@ -122,6 +135,7 @@ const speculation = {
 
     <script>
       import '../scripts/reveal';
+      import '../scripts/cursor';
     </script>
   </body>
 </html>
